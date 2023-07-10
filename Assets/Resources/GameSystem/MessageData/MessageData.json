@@ -1,0 +1,17 @@
+﻿[
+    {
+         "MessageCode":1,
+         "Title":"Check SaveFile",
+         "Detail":"A previously saved file exists. Would you like to save?"
+    },
+  {
+    "MessageCode": 11,
+    "Title": "LoadFile Error",
+    "Detail": "The file to load does not exist."
+  },
+  {
+    "MessageCode": 21,
+    "Title": "AutoLoadFile Error",
+    "Detail": "The auto save file to does not exist."
+  }
+]
