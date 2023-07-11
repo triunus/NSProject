@@ -46,29 +46,37 @@ namespace GameSystem.InGameUI.Skill
         private ISkillManagerForModel skillCellUIManager;
 
         // 변경이 수행되어야 할 라인의 Cell 목록이 기록된 값을 전달한다.
-        private List<ICellOrderToBeChangedObserverForView> cellOrderToBeChangedObservers;
-        private List<List<int>> cellOrderToBeChanged;
+        private List<ICellOrderToBeChangedObserverForView> cellOrderToBeChangedObservers;       // UI 강조가 수행되어야 할 CellNumber를 필요로하는 View 목록.
+        private List<List<int>> cellOrderToBeChanged;                                           // UI 강조가 수행되어야 할 CellNumber 목록.
 
-        private List<IPlayerSkillInformationObserverForView> playerSkillInformationObservers;
-        private List<PlayerSkillInformationStruct> playerSkillInformationStructs;
+        private List<IPlayerSkillInformationObserverForView> playerSkillInformationObservers;   // 사용자가 현재 학습한 스킬의 Level 정보를 필요로하는 View 목록.
+        private List<PlayerSkillInformationStruct> playerSkillInformationStructs;               // 사용자가 현재 학습한 스킬의 Level 정보.
 
-        // SkillUICell의 Line을 나타내는데 사용한다.
-        private List<SkillUICellLineStruct> skillUICellLineStructs;
-        private List<LinkedList<SkillUICellLinePreconditionStruct>> adjacentLinePreconditionStructs;
 
-        // SkillUICell의 main과 sub를 나타내는데 사용한다.
-        private List<SkillUICellMSStruct> skillUICellMSStructs;
-        private List<LinkedList<SkillUICellMSPreconditionStruct>> adjacentMSPreconditionStructs;
+        // SkillUICell의 기본 정보를 갖고 있다.
+        // SkillUICell.CellNumber은 그래프의 정점을 나타내는데 사용한다.
+        // SkillUICell.Line은 그래프의 간선을 나타내는데 사용한다.
+        private List<SkillUICellLineStruct> skillUICellLineStructs;                                     
+        private List<LinkedList<SkillUICellLinePreconditionStruct>> adjacentLinePreconditionStructs;    // SkillUICell.CellNumber 들을 순서가 있는 그래프로 표현하기 위해
+                                                                                                        // CellNumber들 간의 순서를 표현하는 정보가 기록되어 있다.
 
-        // 기존 skill 데이터를 갖고 있다.
+        // SkillNumber와 CellNumber 정보를 갖고 있다.
+        // SkillUICell.main과 sub와 같이 '스킬' 객체를 명시하는 GameObject가 필요로 하는 정보이다.
+        // 사용자와 'SkillCellUI' GameObject 간의 상호작용 시, 선택된 'SkillCellUI'를 구분하기 위해 사용한다.
+        private List<SkillUICellMSStruct> skillUICellMSStructs;                                         
+        private List<LinkedList<SkillUICellMSPreconditionStruct>> adjacentMSPreconditionStructs;        // skillUICellMSStructs.skillNumber 들을 순서가 있는 그래프로 표현하기 위해
+                                                                                                        // SkillNumber들 간의 순서와 가중치를 표현하는 정보가 기록되어 있다.
+
+        // Skill의 기본 데이터를 갖고 있다.
         private List<SkillInformationStruct> skillInformationStructs;
+
         private List<LinkedList<SkillUICellMSPreconditionStruct>> MSPreconditionStructs;
 
-        private List<int> cellLIneStartPosition;   // skillUICell 테이블 중, 최초로 시작되는 cell의 intersectinoNumber와 cellNumber
-        private List<int> cellMSStartPosition;
+        private List<int> cellLIneStartPosition;        // skillUICell 테이블 중, 최초로 시작되는 cell의 cellNumber
+        private List<int> cellMSStartPosition;          // skillUICell 테이블 중, 최초로 시작되는 skill의 skillNumber
 
-        private List<List<int>> activatedLineOrder;                                     // 특정 cellNumber에 도착하기 위한, cellNumber순서.
-        private List<List<int>> activatedMSOrder;
+        private List<List<int>> activatedLineOrder;                                     // 특정 cellNumber에 도착하기 위한, cellNumber 순서.
+        private List<List<int>> activatedMSOrder;                                       // 특정 skillNumber에 도착하기 위한, skillNumber 순서.
 
         private int beClickedCellNumber;                                        // 현재 클릭된 스킬 명시.
 
@@ -274,7 +282,7 @@ namespace GameSystem.InGameUI.Skill
             JArray skillUICellMSPrecondition = JArray.Parse(skillUICellMSPrecondition_TextAsset.ToString());
 
             // adjacentMSPreconditionStructs
-            for (int i = 0; i < skillUICellMSStructs.Count; ++i)
+            for (int i = 0; i < this.skillUICellMSStructs.Count; ++i)
             {
                 LinkedList<SkillUICellMSPreconditionStruct> perSkillUICellMS = new LinkedList<SkillUICellMSPreconditionStruct>();
                 this.adjacentMSPreconditionStructs.Add(perSkillUICellMS);
@@ -289,7 +297,7 @@ namespace GameSystem.InGameUI.Skill
             }
 
             // MSPreconditionStructs
-            for (int i = 0; i < skillUICellMSStructs.Count; ++i)
+            for (int i = 0; i < this.skillUICellMSStructs.Count; ++i)
             {
                 LinkedList<SkillUICellMSPreconditionStruct> perSkillUICellMS = new LinkedList<SkillUICellMSPreconditionStruct>();
                 this.MSPreconditionStructs.Add(perSkillUICellMS);
@@ -303,6 +311,7 @@ namespace GameSystem.InGameUI.Skill
                         precondition_Weight: (int)skillUICellMSPrecondition[i]["Precondition_Weight"]));
             }
         }
+        private void MakeSkillUICell
 
         private void CellUILineTopologySort(int destinationCellNumber)
         {
