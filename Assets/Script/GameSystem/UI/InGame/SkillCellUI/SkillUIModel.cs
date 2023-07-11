@@ -205,14 +205,6 @@ namespace GameSystem.InGameUI.Skill
 
                 this.NotifyCellOrderToBeChangedObservers(ActivateOrNot.Activate);    // 선 활성화
             }
-
-            /*            foreach (var item01 in cellOrderToBeChanged)
-                        {
-                            foreach (var item02 in item01)
-                            {
-                                Debug.Log("DecideActivateOrInActivateCell_cellOrderToBeChanged : " + item02.ToString());
-                            }
-                        }*/
         }
         public void LearnSkill(int skillNumber)
         {
@@ -328,14 +320,6 @@ namespace GameSystem.InGameUI.Skill
 
                 if (destinationIsVisited) { this.activatedLineOrder.Add( Enumerable.Reverse(order).ToList()); }
             }
-
-/*            foreach (var item01 in activatedLineOrder)
-            {
-                foreach (var item02 in item01)
-                {
-                    Debug.Log("CellUILineTopologySort : " + item02.ToString());
-                }
-            }*/
         }
         private void CellUILineDFS(int startCellNumber, ref int destinationCellNumber, ref bool destinationIsVisited, ref List<int> visited, ref List<int> order)
         {
@@ -377,14 +361,6 @@ namespace GameSystem.InGameUI.Skill
 
                 order.Clear();
             }
-
-/*            foreach (var item01 in activatedMSOrder)
-            {
-                foreach (var item02 in item01)
-                {
-                    Debug.Log("CellUIMSTopologySort : " + item02.ToString());
-                }
-            }*/
         }
         private void CellUIMSDFS(int startSkillNumber, ref int destinationSkillNumber, ref bool destinationIsVisited, ref List<int> visited, ref List<int> order)
         {
@@ -433,32 +409,14 @@ namespace GameSystem.InGameUI.Skill
                 satisfyCondition[i].Add(new KeyValuePair<int, bool>(skillUICellMSStructs[activatedMSOrder[i][activatedMSOrder[i].Count-1]].CellNumber, false));
             }
 
-/*            foreach (var item01 in satisfyCondition)
-            {
-                foreach (var item02 in item01)
-                {
-                    Debug.Log("ExcludeCellNumberToBeActivated_satisfyCondition.Key : " + item02.Key + ", ExcludeCellNumberToBeActivated_satisfyCondition.Value : " + item02.Value);
-                }
-            }*/
-
-/*            foreach (var item01 in activatedLineOrder)
-            {
-                foreach (var item02 in item01)
-                {
-                    Debug.Log("01. ExcludeCellNumberToBeActivated_activatedLineOrder : " + item02.ToString());
-                }
-            }*/
-
 
             for (int i = 0; i < satisfyCondition.Count; ++i)
             {
                 while (satisfyCondition[i][0].Value)
                 {
-//                    Debug.Log("밖 : satisfyCondition[i][0].Value : " + satisfyCondition[i][0].Value);
 
                     while (true) // true야 반복, 두 값이 다르면 같으면 지속.
                     {
-//                        Debug.Log("안 : satisfyCondition[i][1].Key, activatedLineOrder[i][0] : " + satisfyCondition[i][1].Key + ", " + activatedLineOrder[i][0]);
 
                         if (satisfyCondition[i][1].Key == activatedLineOrder[i][0]) { break; }
 
@@ -468,14 +426,6 @@ namespace GameSystem.InGameUI.Skill
                     satisfyCondition[i].RemoveAt(0);
                 }
             }
-
-/*            foreach (var item01 in activatedLineOrder)
-            {
-                foreach (var item02 in item01)
-                {
-                    Debug.Log("02. ExcludeCellNumberToBeActivated_activatedLineOrder : " + item02.ToString());
-                }
-            }*/
         }
         private void ExtractCellNumberToBeChanged()
         {
@@ -505,11 +455,6 @@ namespace GameSystem.InGameUI.Skill
 
                 // 가장 마지막 값은 나중에 추가해줌.
                 temp.Add(activatedLineOrder[i][activatedLineOrder[i].Count-1]);
-
-/*                foreach (var item in temp)
-                {
-                    Debug.Log("temp " + item.ToString());
-                }*/
 
                 this.cellOrderToBeChanged.Add(temp);
             }
