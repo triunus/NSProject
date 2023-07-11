@@ -170,7 +170,7 @@ namespace GameSystem.InGameUI.Skill
                 this.beClickedCellNumber = skillUICellMSStruct.CellNumber;
 
                 this.CellUILineTopologySort(this.beClickedCellNumber);
-                this.CellUIMSTopologySort(this.beClickedCellNumber);
+                this.CellUIMSTopologySort(skillUICellMSStruct);
                 this.ExcludeCellNumberToBeActivated();
                 this.ExtractCellNumberToBeChanged();
 
@@ -199,7 +199,7 @@ namespace GameSystem.InGameUI.Skill
                 this.cellOrderToBeChanged.Clear();
 
                 this.CellUILineTopologySort(this.beClickedCellNumber);
-                this.CellUIMSTopologySort(this.beClickedCellNumber);
+                this.CellUIMSTopologySort(skillUICellMSStruct);
                 this.ExcludeCellNumberToBeActivated();
                 this.ExtractCellNumberToBeChanged();
 
@@ -358,11 +358,11 @@ namespace GameSystem.InGameUI.Skill
 
             if (destinationIsVisited) { order.Add(startCellNumber); }
         }
-        private void CellUIMSTopologySort(int destinationCellNumber)
+        private void CellUIMSTopologySort(SkillUICellMSStruct skillUICellMSStruct)
         {
             List<int> visited = new List<int>();
             bool destinationIsVisited;
-            int destinationSkillNumber = this.skillUICellMSStructs[skillUICellMSStructs.FindIndex(x => x.CellNumber == destinationCellNumber)].SkillNumber;
+            int destinationSkillNumber = skillUICellMSStruct.SkillNumber;
 
             for (int i = 0; i < this.cellMSStartPosition.Count; ++i)
             {
@@ -370,7 +370,7 @@ namespace GameSystem.InGameUI.Skill
                 visited = Enumerable.Repeat(0, skillUICellMSStructs.Count).ToList();
                 destinationIsVisited = false;
 
-                // 시작 intersection, 시작 cellNumber, 방문지점, 목적지 방문여부, 방문기록, 방문 순서.
+                // 시작 cellNumber, 방문지점, 목적지 방문여부, 방문기록, 방문 순서.
                 this.CellUIMSDFS(cellMSStartPosition[i], ref destinationSkillNumber, ref destinationIsVisited, ref visited, ref order);
 
                 if (destinationIsVisited) { this.activatedMSOrder.Add(Enumerable.Reverse(order).ToList()); }
