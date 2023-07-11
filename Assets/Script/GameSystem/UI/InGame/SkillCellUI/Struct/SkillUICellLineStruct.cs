@@ -8,6 +8,8 @@ namespace GameSystem.InGameUI.Skill
         non
     }
 
+    // SkillUICell.CellNumber은 그래프의 정점을 나타내는데 사용한다.
+    // SkillUICell.Line은 그래프의 간선을 나타내는데 사용한다.
     public struct SkillUICellStruct
     {
         private int cellNumber;

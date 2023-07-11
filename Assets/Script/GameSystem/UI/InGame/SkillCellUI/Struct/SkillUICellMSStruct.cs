@@ -1,5 +1,9 @@
 namespace GameSystem.InGameUI.Skill
 {
+    /// <summary>
+    ///     SkillNumber와 CellNumber 정보를 갖고 있다.
+    ///     SkillUICell.main과 sub와 같이 '스킬' 객체를 명시하는 GameObject가 필요로 하는 정보이다.
+    /// </summary>
     public struct SkillUICellMSStruct
     {
         private int skillNumber;
