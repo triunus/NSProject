@@ -14,7 +14,7 @@ namespace GameSystem.InGameUI.Skill
 
     public interface ISkillManagerForModel
     {
-        public ref List<SkillUICellLineStruct> GetSkillUICellLineStructs();
+        public ref List<SkillUICellStruct> GetSkillUICellLineStructs();
         public ref List<SkillUICellMSStruct> GetSkillUICellMSStructs();
         public ref List<SkillInformationStruct> GetSkillInformationStruct();
         public ref List<PlayerSkillInformationStruct> GetPlayerSkillInformationStruct();
@@ -34,16 +34,16 @@ namespace GameSystem.InGameUI.Skill
         private ISkillUIModel skillUIModel;
         private ISkillUIController skillCellUIController;
 
-        private List<SkillUICellLineStruct> skillUICellLineStructs;
+        private List<SkillUICellStruct> skillUICellStructs;
         private List<SkillUICellMSStruct> skillUICellMSStructs;
 
         private List<SkillInformationStruct> skillInformationStructs;
         private List<PlayerSkillInformationStruct> playerSkillInformationStructs;
 
         // ISkillManagerForModel ±¸Çö
-        public ref List<SkillUICellLineStruct> GetSkillUICellLineStructs()
+        public ref List<SkillUICellStruct> GetSkillUICellLineStructs()
         {
-            return ref this.skillUICellLineStructs;
+            return ref this.skillUICellStructs;
         }
         public ref List<SkillUICellMSStruct> GetSkillUICellMSStructs()
         {
@@ -61,7 +61,7 @@ namespace GameSystem.InGameUI.Skill
 
         private void Awake()
         {
-            this.skillUICellLineStructs = new List<SkillUICellLineStruct>();
+            this.skillUICellStructs = new List<SkillUICellStruct>();
             this.skillUICellMSStructs = new List<SkillUICellMSStruct>();
             this.skillInformationStructs = new List<SkillInformationStruct>();
             this.playerSkillInformationStructs = new List<PlayerSkillInformationStruct>();
@@ -106,13 +106,13 @@ namespace GameSystem.InGameUI.Skill
 
             for (int i = 0; i < skillUICellLine.Count; ++i)
             {
-                SkillUICellLineStruct skillUICellLineStruct = new SkillUICellLineStruct(
+                SkillUICellStruct SkillUICellStruct = new SkillUICellStruct(
                     cellNumber: (int)skillUICellLine[i]["CellNumber"],
                     cellContent: (CellContent)System.Enum.Parse(typeof(CellContent), skillUICellLine[i]["Content"].ToString()),
                     lineNumber: (int)skillUICellLine[i]["LineNumber"]
                     );
 
-                this.skillUICellLineStructs.Add(skillUICellLineStruct);
+                this.skillUICellStructs.Add(SkillUICellStruct);
             }
         }
         private void RecodeSkillUICellMSInformation()
@@ -122,12 +122,12 @@ namespace GameSystem.InGameUI.Skill
 
             for (int i = 0; i < skillUICellMS.Count; ++i)   
             {
-                SkillUICellMSStruct skillUICellLineStruct = new SkillUICellMSStruct(
+                SkillUICellMSStruct SkillUICellStruct = new SkillUICellMSStruct(
                     skillNumber: (int)skillUICellMS[i]["SkillNumber"],
                     cellNumber: (int)skillUICellMS[i]["CellNumber"]
                     );
 
-                this.skillUICellMSStructs.Add(skillUICellLineStruct);
+                this.skillUICellMSStructs.Add(SkillUICellStruct);
             }
         }
         private void RecordSkillInformation()
@@ -137,7 +137,7 @@ namespace GameSystem.InGameUI.Skill
 
             for (int i = 0; i < skillInformation.Count; ++i)
             {
-                SkillInformationStruct skillUICellLineStruct = new SkillInformationStruct(
+                SkillInformationStruct SkillUICellStruct = new SkillInformationStruct(
                     skillNumber: (int)skillInformation[i]["SkillNumber"],
                     skillName: (string)skillInformation[i]["SkillName"],
                     skillDescription: (string)skillInformation[i]["SkillDescription"],
@@ -145,7 +145,7 @@ namespace GameSystem.InGameUI.Skill
                     cost : (int)skillInformation[i]["Cost"]
                     );
 
-                this.skillInformationStructs.Add(skillUICellLineStruct);
+                this.skillInformationStructs.Add(SkillUICellStruct);
             }
         }
     }

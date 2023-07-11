@@ -13,8 +13,8 @@ namespace GameSystem.InGameUI.Skill
     public interface ISkillCellUIView
     {
         public void InitialNonCell(ref ISkillUIModel skillUIModel, ISkillUIController skillUIController);
-        public void InitizlLineCell(ref ISkillUIModel skillUIModel, ISkillUIController skillUIController, SkillUICellLineStruct skillUICellLineStruct);
-        public void InitializeMainAndSubCell(ref ISkillUIModel skillUIModel, ISkillUIController skillUIController, SkillUICellLineStruct skillUICellLineStruct, SkillUICellMSStruct skillUICellMSStruct, SkillInformationStruct skillInformationStruct);
+        public void InitizlLineCell(ref ISkillUIModel skillUIModel, ISkillUIController skillUIController, SkillUICellStruct SkillUICellStruct);
+        public void InitializeMainAndSubCell(ref ISkillUIModel skillUIModel, ISkillUIController skillUIController, SkillUICellStruct SkillUICellStruct, SkillUICellMSStruct skillUICellMSStruct, SkillInformationStruct skillInformationStruct);
     }
 
     public class SkillCellUIView : MonoBehaviour, ISkillCellUIView, ICellOrderToBeChangedObserverForView, IPlayerSkillInformationObserverForView
@@ -24,7 +24,7 @@ namespace GameSystem.InGameUI.Skill
 
         private ISkillUIController skillUIController;
 
-        private SkillUICellLineStruct skillUICellLineStruct;                    // 고정
+        private SkillUICellStruct SkillUICellStruct;                    // 고정
         private SkillUICellMSStruct skillUICellMSStruct;                        // 고정
         private SkillInformationStruct skillInformationStruct;                  // 고정
 
@@ -45,30 +45,30 @@ namespace GameSystem.InGameUI.Skill
         public void InitialNonCell(ref ISkillUIModel skillUIModel, ISkillUIController skillUIController) {
             this.skillUIController = skillUIController;
         }
-        public void InitizlLineCell(ref ISkillUIModel skillUIModel, ISkillUIController skillUIController, SkillUICellLineStruct skillUICellLineStruct)
+        public void InitizlLineCell(ref ISkillUIModel skillUIModel, ISkillUIController skillUIController, SkillUICellStruct SkillUICellStruct)
         {
             this.skillUIController = skillUIController;
 
-            this.skillUICellLineStruct = skillUICellLineStruct;
+            this.SkillUICellStruct = SkillUICellStruct;
 
             this.RegisterCellOrderToBeChangedObserver(ref skillUIModel);    // CellOrderToBeChanged 데이터에 대한 Obserever 등록(구독).
 
-            this.InitializeCellLine();                                      // skillUICellLineStruct.LineNumber를 이용한, 그래프 간선 그리기.
+            this.InitializeCellLine();                                      // SkillUICellStruct.LineNumber를 이용한, 그래프 간선 그리기.
         }
         public void InitializeMainAndSubCell(ref ISkillUIModel skillUIModel, ISkillUIController skillUIController,
-            SkillUICellLineStruct skillUICellLineStruct, SkillUICellMSStruct skillUICellMSStruct, SkillInformationStruct skillInformationStruct)
+            SkillUICellStruct SkillUICellStruct, SkillUICellMSStruct skillUICellMSStruct, SkillInformationStruct skillInformationStruct)
         {
             this.skillUIController = skillUIController;
 
-            this.skillUICellLineStruct = skillUICellLineStruct;
+            this.SkillUICellStruct = SkillUICellStruct;
             this.skillUICellMSStruct = skillUICellMSStruct;
             this.skillInformationStruct = skillInformationStruct;
 
             this.RegisterCellOrderToBeChangedObserver(ref skillUIModel);    // CellOrderToBeChanged 데이터에 대한 Obserever 등록(구독).
             this.RegisterPlayerSkillInformationObserver(ref skillUIModel);  // PlayerSkillInformation 데이터에 대한 Obserever 등록(구독).
 
-            this.InitializeCellLine();                                      // skillUICellLineStruct.LineNumber를 이용한, 그래프 간선 그리기.
-            this.InitializeCellMainAndSub();                                // skillUICellLineStruct.CellContent를 이용한, 해당되는 하위 오브젝트 활성화.
+            this.InitializeCellLine();                                      // SkillUICellStruct.LineNumber를 이용한, 그래프 간선 그리기.
+            this.InitializeCellMainAndSub();                                // SkillUICellStruct.CellContent를 이용한, 해당되는 하위 오브젝트 활성화.
             this.DisplayDegreeOfSkillLevel();                               // PlayerSkillInformation.currentLevel과 skillInformationStruct.SkillMaxLevel을 이용한, 스킬 학습량 표시.
         }
 
@@ -89,7 +89,7 @@ namespace GameSystem.InGameUI.Skill
         // 최초 셀 그리기.
         private void InitializeCellLine()
         {
-            int temp = this.skillUICellLineStruct.LineNumber;
+            int temp = this.SkillUICellStruct.LineNumber;
 
             // 선 정리.
             for(int i = 0; 0 < temp; ++i)
@@ -103,7 +103,7 @@ namespace GameSystem.InGameUI.Skill
         // main과 sub 객체 초기 설정.
         private void InitializeCellMainAndSub()
         {
-            if (this.skillUICellLineStruct.CellContent == CellContent.main)
+            if (this.SkillUICellStruct.CellContent == CellContent.main)
             {
                 this.myRectTransform.GetChild(1).gameObject.SetActive(true);
                 this.myRectTransform.GetChild(1).GetChild(0).gameObject.SetActive(true);
@@ -114,7 +114,7 @@ namespace GameSystem.InGameUI.Skill
 
                 this.degreeOfSkillLevel = this.myRectTransform.GetChild(1).GetChild(0).GetChild(1).GetChild(0).GetComponent<UnityEngine.UI.Image>();
             }
-            else if (this.skillUICellLineStruct.CellContent == CellContent.sub)
+            else if (this.SkillUICellStruct.CellContent == CellContent.sub)
             {
                 this.myRectTransform.GetChild(1).gameObject.SetActive(true);
                 this.myRectTransform.GetChild(1).GetChild(1).gameObject.SetActive(true);
@@ -141,24 +141,24 @@ namespace GameSystem.InGameUI.Skill
                 for(int j = 0; j < this.cellOrderToBeChanged[i].Count; ++j)
                 {
                     // 내 cellNumber와 동일한지 확인.
-                    if (cellOrderToBeChanged[i][j] == skillUICellLineStruct.CellNumber)
+                    if (cellOrderToBeChanged[i][j] == SkillUICellStruct.CellNumber)
                     {
                         isChanged = true;
 
-                        if (j > 0 && (skillUICellLineStruct.CellNumber - cellOrderToBeChanged[i][j-1] == 1))
+                        if (j > 0 && (SkillUICellStruct.CellNumber - cellOrderToBeChanged[i][j-1] == 1))
                         {
                             lineWantToActivate |= 1;
                         }
-                        else if(j > 0 && (skillUICellLineStruct.CellNumber - cellOrderToBeChanged[i][j - 1] == 10))
+                        else if(j > 0 && (SkillUICellStruct.CellNumber - cellOrderToBeChanged[i][j - 1] == 10))
                         {
                             lineWantToActivate |= 8;
                         }
 
-                        if(j < cellOrderToBeChanged[i].Count-1 && (cellOrderToBeChanged[i][j + 1] - skillUICellLineStruct.CellNumber == 1))
+                        if(j < cellOrderToBeChanged[i].Count-1 && (cellOrderToBeChanged[i][j + 1] - SkillUICellStruct.CellNumber == 1))
                         {
                             lineWantToActivate |= 4;
                         }
-                        else if(j < cellOrderToBeChanged[i].Count - 1 && (cellOrderToBeChanged[i][j + 1] - skillUICellLineStruct.CellNumber == 10))
+                        else if(j < cellOrderToBeChanged[i].Count - 1 && (cellOrderToBeChanged[i][j + 1] - SkillUICellStruct.CellNumber == 10))
                         {
                             lineWantToActivate |= 2;
                         }
@@ -189,9 +189,9 @@ namespace GameSystem.InGameUI.Skill
             }
 
             // main과 sub의 UI 강조 객체 비활성화
-            if (skillUICellLineStruct.CellContent == CellContent.main)
+            if (SkillUICellStruct.CellContent == CellContent.main)
                 this.myRectTransform.GetChild(1).GetChild(0).GetChild(0).gameObject.SetActive(isActivate);
-            if (skillUICellLineStruct.CellContent == CellContent.sub)
+            if (SkillUICellStruct.CellContent == CellContent.sub)
                 this.myRectTransform.GetChild(1).GetChild(1).GetChild(0).gameObject.SetActive(isActivate);
         }
         // 스킬 학습량 표시.

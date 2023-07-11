@@ -8,13 +8,13 @@ namespace GameSystem.InGameUI.Skill
         non
     }
 
-    public struct SkillUICellLineStruct
+    public struct SkillUICellStruct
     {
         private int cellNumber;
         private CellContent cellContent;
         private int lineNumber;
 
-        public SkillUICellLineStruct(int cellNumber, CellContent cellContent = CellContent.non, int lineNumber = 0)
+        public SkillUICellStruct(int cellNumber, CellContent cellContent = CellContent.non, int lineNumber = 0)
         {
             this.cellNumber = cellNumber;
             this.cellContent = cellContent;

@@ -131,9 +131,9 @@ namespace GameSystem.InGameUI.Skill
         }
         public void CreateSkillCellUI(RectTransform skillContentRectTransform, SkillMenuType skillMenuType)
         {
-            System.Collections.Generic.List<SkillUICellLineStruct> tempSkillUICellLineStructs = null;
+            System.Collections.Generic.List<SkillUICellStruct> tempSkillUICellLineStructs = null;
 
-            if (skillMenuType == SkillMenuType.Necromancy) tempSkillUICellLineStructs = this.skillUIModel.SkillUICellLineStructs;
+            if (skillMenuType == SkillMenuType.Necromancy) tempSkillUICellLineStructs = this.skillUIModel.SkillUICellStructs;
 //            else tempSkillUICellLineStructs = this.skillUIModel.ClassSkillUICellLineStructs;      // 차후 생성 예정.
 
             System.Collections.Generic.List<SkillUICellMSStruct> tempSkillUICellMSStructs = this.skillUIModel.SkillUICellMSStructs;
@@ -141,14 +141,14 @@ namespace GameSystem.InGameUI.Skill
 
             int tempSkillNumber;
 
-            // SkillUICellLineStructs 개수만큼 SkillUICell Prefab 생성.
+            // skillUICellStructs 개수만큼 SkillUICell Prefab 생성.
             for (int i = 0; i < tempSkillUICellLineStructs.Count; ++i)
             {
                 ISkillCellUIView skillCellUIView = Instantiate(Resources.Load<RectTransform>("Prefab/UI/SkillUI/SkillUICell"), skillContentRectTransform).GetComponent<ISkillCellUIView>();
 
                 tempSkillNumber = tempSkillUICellMSStructs.FindIndex(x => x.CellNumber == tempSkillUICellLineStructs[i].CellNumber);
 
-                // SkillUICellLineStructs.CellContent의 값을 이용하여, SkillUICell Prefab의 역할을 구분. 초기설정 메소드 구분하여 호출.
+                // skillUICellStructs.CellContent의 값을 이용하여, SkillUICell Prefab의 역할을 구분. 초기설정 메소드 구분하여 호출.
                 switch (tempSkillUICellLineStructs[i].CellContent)
                 {
                     case CellContent.non:
