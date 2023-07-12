@@ -126,7 +126,7 @@ namespace GameSystem.InGameUI.Skill
         }
         // --------------------------
 
-        // SkillUIModel 멤버 정의.
+        // SkillUIModel 멤버 정의 및 초기값 입력.
         private void Awake()
         {
             this.cellOrderToBeChangedObservers = new List<ICellOrderToBeChangedObserverForView>();
@@ -163,8 +163,8 @@ namespace GameSystem.InGameUI.Skill
             this.FindCellNumberStartPosition();         // CellNumber를 정점으로 사용하는 그래프의 시작 정점 찾기.
             this.FindCellMSStartPosition();             // SkillNumber를 정점으로 사용하는 그래프의 시작 정점 찾기.
 
-            this.MakeSkillUICellLineLinkedList();       // 
-            this.MakeSkillUICellMSLinkedList();
+            this.MakeSkillUICellLineLinkedList();       // CellNumber 간에 순서를 기록한 데이터를 읽어와, 인접리스트를 만든다.
+            this.MakeSkillUICellMSLinkedList();         // SkillNumber 간에 순서를 기록한 데이터를 읽어와, 인접리스트를 만든다.
         }
         public void DecideActivateOrInActivateCell(SkillUICellMSStruct skillUICellMSStruct)
         {
@@ -257,15 +257,18 @@ namespace GameSystem.InGameUI.Skill
         }
         private void MakeSkillUICellLineLinkedList()
         {
-            TextAsset skillUICellLinePrecondition_TextAsset = Resources.Load<TextAsset>("GameSystem/SkillData/UI/SkillUICellLinePrecondition");
+            // CellNumber 정점 간의 순서를 기록한 Local 데이터 읽어오기.
+            TextAsset skillUICellLinePrecondition_TextAsset = Resources.Load<TextAsset>("GameSystem/SkillData/UI/SkillUICellPrecondition");
             JArray skillUICellLinePrecondition = JArray.Parse(skillUICellLinePrecondition_TextAsset.ToString());
 
+            // LinkedList 정의.
             for (int i = 0; i < skillUICellStructs.Count; ++i)
             {
                 LinkedList<SkillUICellNumberPreconditionStruct> perSkillUICellLine = new LinkedList<SkillUICellNumberPreconditionStruct>();
                 this.adjacentCellNumberPreconditionStructs.Add(perSkillUICellLine);
             }
 
+            // CellNumber 인접리스트 객체 생성.
             for (int i = 0; i < skillUICellLinePrecondition.Count; ++i)
             {
                 this.adjacentCellNumberPreconditionStructs[(int)skillUICellLinePrecondition[i]["Precondition_p"]].AddLast(
@@ -275,6 +278,7 @@ namespace GameSystem.InGameUI.Skill
         }
         private void MakeSkillUICellMSLinkedList()
         {
+            // SkillNumber 정점 간의 순서와 가중치를 기록한 Local 데이터 읽어오기.
             TextAsset skillUICellMSPrecondition_TextAsset = Resources.Load<TextAsset>("GameSystem/SkillData/UI/SkillUICellMSPrecondition");
             JArray skillUICellMSPrecondition = JArray.Parse(skillUICellMSPrecondition_TextAsset.ToString());
 

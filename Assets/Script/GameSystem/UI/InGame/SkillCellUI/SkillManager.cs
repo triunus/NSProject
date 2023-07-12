@@ -101,15 +101,15 @@ namespace GameSystem.InGameUI.Skill
         // SkillManager 내부 로직.
         private void RecordSkillUICellLineInformation()
         {
-            TextAsset skillUICellLine_TextAsset = Resources.Load<TextAsset>("GameSystem/SkillData/UI/SkillUICellLine");
-            JArray skillUICellLine = JArray.Parse(skillUICellLine_TextAsset.ToString());
+            TextAsset skillUICell_TextAsset = Resources.Load<TextAsset>("GameSystem/SkillData/UI/SkillUICell");
+            JArray skillUICell = JArray.Parse(skillUICell_TextAsset.ToString());
 
-            for (int i = 0; i < skillUICellLine.Count; ++i)
+            for (int i = 0; i < skillUICell.Count; ++i)
             {
                 SkillUICellStruct SkillUICellStruct = new SkillUICellStruct(
-                    cellNumber: (int)skillUICellLine[i]["CellNumber"],
-                    cellContent: (CellContent)System.Enum.Parse(typeof(CellContent), skillUICellLine[i]["Content"].ToString()),
-                    lineNumber: (int)skillUICellLine[i]["LineNumber"]
+                    cellNumber: (int)skillUICell[i]["CellNumber"],
+                    cellContent: (CellContent)System.Enum.Parse(typeof(CellContent), skillUICell[i]["Content"].ToString()),
+                    lineNumber: (int)skillUICell[i]["LineNumber"]
                     );
 
                 this.skillUICellStructs.Add(SkillUICellStruct);
