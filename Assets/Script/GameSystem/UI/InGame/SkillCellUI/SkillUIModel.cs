@@ -65,11 +65,11 @@ namespace GameSystem.InGameUI.Skill
         // Skill의 기본 데이터를 갖고 있다.
         private List<SkillInformationStruct> skillInformationStructs;
 
-        private List<int> cellLineStartPosition;        // skillUICell 테이블 중, 최초로 시작되는 cell의 cellNumber
+        private List<int> cellStartPosition;        // skillUICell 테이블 중, 최초로 시작되는 cell의 cellNumber
         private List<int> cellMSStartPosition;          // skillUICell 테이블 중, 최초로 시작되는 skill의 skillNumber
 
-        private List<List<int>> activatedLineOrder;                                     // 특정 cellNumber에 도착하기 위한, cellNumber 순서.
-        private List<List<int>> activatedMSOrder;                                       // 특정 skillNumber에 도착하기 위한, skillNumber 순서.
+        private List<List<int>> CellNumberOrder;                                     // 특정 cellNumber에 도착하기 위한, cellNumber 순서.
+        private List<List<int>> MSOrder;                                       // 특정 skillNumber에 도착하기 위한, skillNumber 순서.
 
         private int beClickedCellNumber;                                        // 현재 클릭된 스킬 명시.
 
@@ -140,11 +140,11 @@ namespace GameSystem.InGameUI.Skill
             this.adjacentMSPreconditionStructs = new List<LinkedList<SkillUICellMSPreconditionStruct>>();
             this.MSPreconditionStructs = new List<LinkedList<SkillUICellMSPreconditionStruct>>();
 
-            this.cellLineStartPosition = new List<int>();
+            this.cellStartPosition = new List<int>();
             this.cellMSStartPosition = new List<int>();
 
-            this.activatedLineOrder = new List<List<int>>();
-            this.activatedMSOrder = new List<List<int>>();
+            this.CellNumberOrder = new List<List<int>>();
+            this.MSOrder = new List<List<int>>();
 
             this.beClickedCellNumber = -1;
         }
@@ -189,8 +189,8 @@ namespace GameSystem.InGameUI.Skill
 
                 this.NotifyCellOrderToBeChangedObservers(ActivateOrNot.Not);  // 선 비활성화
 
-                this.activatedLineOrder.Clear();
-                this.activatedMSOrder.Clear();
+                this.CellNumberOrder.Clear();
+                this.MSOrder.Clear();
                 this.cellOrderToBeChanged.Clear();
             }
             // 선택된 것과, 새롭게 선택된 것이 다름. 선 비활성화 후 선 활성화.
@@ -200,8 +200,8 @@ namespace GameSystem.InGameUI.Skill
 
                 this.NotifyCellOrderToBeChangedObservers(ActivateOrNot.Not);  // 선 비활성화
 
-                this.activatedLineOrder.Clear();
-                this.activatedMSOrder.Clear();
+                this.CellNumberOrder.Clear();
+                this.MSOrder.Clear();
                 this.cellOrderToBeChanged.Clear();
 
                 this.CellUILineTopologySort(this.beClickedCellNumber);
@@ -246,15 +246,15 @@ namespace GameSystem.InGameUI.Skill
             for(int i=0; i < skillUICellStructs.Count; ++i)
             {
                 if (skillUICellStructs[i].CellContent == CellContent.main && (skillUICellStructs[i].LineNumber == 4 || skillUICellStructs[i].LineNumber == 0))
-                    this.cellLineStartPosition.Add(skillUICellStructs[i].CellNumber);
+                    this.cellStartPosition.Add(skillUICellStructs[i].CellNumber);
             }
         }
         // SkillNumber를 정점으로 사용하는 그래프의 시작 정점 찾기.
         private void FindCellMSStartPosition()
         {
-            for (int i = 0; i < cellLineStartPosition.Count; ++i)
+            for (int i = 0; i < cellStartPosition.Count; ++i)
             {
-                this.cellMSStartPosition.Add(this.skillUICellMSStructs[skillUICellMSStructs.FindIndex(x => x.CellNumber == cellLineStartPosition[i])].SkillNumber);
+                this.cellMSStartPosition.Add(this.skillUICellMSStructs[skillUICellMSStructs.FindIndex(x => x.CellNumber == cellStartPosition[i])].SkillNumber);
             }
         }
 
@@ -332,37 +332,45 @@ namespace GameSystem.InGameUI.Skill
             List<int> visited = new List<int>();
             bool destinationIsVisited;
 
-            for (int i = 0; i < this.cellLineStartPosition.Count; ++i)
+            for (int i = 0; i < this.cellStartPosition.Count; ++i)
             {
                 List<int> order = new List<int>();
-                visited = Enumerable.Repeat(0, skillUICellStructs.Count).ToList();
-                destinationIsVisited = false;
+                visited = Enumerable.Repeat(0, skillUICellStructs.Count).ToList();      // 모든 정점에 대한 방문여부.
+                destinationIsVisited = false;                                           // 목표 정점 방문여부를 나타내는 boolean 값.
 
-                // 시작 intersection, 시작 cellNumber, 방문지점, 목적지 방문여부, 방문기록, 방문 순서.
-                this.CellUILineDFS(cellLineStartPosition[i], ref destinationCellNumber, ref destinationIsVisited, ref visited, ref order);
+                // 시작 cellNumber, 방문지점, 목적지 방문여부, 방문기록, 방문 순서.
+                this.CellUILineDFS(cellStartPosition[i], ref destinationCellNumber, ref destinationIsVisited, ref visited, ref order);
 
-                if (destinationIsVisited) { this.activatedLineOrder.Add( Enumerable.Reverse(order).ToList()); }
+                // 목표로한 정점을 방문하였다면,
+                // '목표 정점 -> ... -> 시작 정점'으로 되어있는 정점 순서를 뒤집는다.
+                // 정상으로 돌아온 방문ㅇ
+                if (destinationIsVisited) { this.CellNumberOrder.Add( Enumerable.Reverse(order).ToList()); }
             }
         }
         private void CellUILineDFS(int startCellNumber, ref int destinationCellNumber, ref bool destinationIsVisited, ref List<int> visited, ref List<int> order)
         {
             visited[startCellNumber] = 1;
 
+            // 현재 방문한 정점이, 목표로한 정점과 동이하다면,
             if (startCellNumber == destinationCellNumber) 
             {
-                destinationIsVisited = true;    
-                order.Add(startCellNumber);
-                return;
+                destinationIsVisited = true;                    // 목표 정점 방문여부 = true;
+                order.Add(startCellNumber);                     // 현재 정점 기록.
+                return;                                         // 이전 정점으로 돌아감.
             }
 
+            // 현재 정점에서 갈 수 있는 정점들을 탐색.
             foreach (var item in adjacentCellNumberPreconditionStructs[startCellNumber])
             {
+                // 다음 방문할 정점이 방문한적이 없으며 && 목표로 한 지점을 방문한 적이 없는지 확인.
                 if (visited[item.Precondition_q] == 0 && !destinationIsVisited)
                 {
+                    // 다음 정점 탐색.
                     CellUILineDFS(item.Precondition_q, ref destinationCellNumber, ref destinationIsVisited, ref visited, ref order);
                 }
             }
 
+            // 현재 정점의 연장선에서 목표로한 지점을 방문한 적이 있다면, 현재 정점을 기록한다.
             if (destinationIsVisited) { order.Add(startCellNumber); }
         }
         private void CellUIMSTopologySort(SkillUICellMSStruct skillUICellMSStruct)
@@ -380,7 +388,7 @@ namespace GameSystem.InGameUI.Skill
                 // 시작 cellNumber, 방문지점, 목적지 방문여부, 방문기록, 방문 순서.
                 this.CellUIMSDFS(cellMSStartPosition[i], ref destinationSkillNumber, ref destinationIsVisited, ref visited, ref order);
 
-                if (destinationIsVisited) { this.activatedMSOrder.Add(Enumerable.Reverse(order).ToList()); }
+                if (destinationIsVisited) { this.MSOrder.Add(Enumerable.Reverse(order).ToList()); }
 
                 order.Clear();
             }
@@ -411,25 +419,25 @@ namespace GameSystem.InGameUI.Skill
         {
             List<List<KeyValuePair<int, bool>>> satisfyCondition = new List<List<KeyValuePair<int, bool>>>();
 
-            for (int i = 0; i < activatedMSOrder.Count; ++i)
+            for (int i = 0; i < MSOrder.Count; ++i)
             {
                 List<KeyValuePair<int, bool>> temp = new List<KeyValuePair<int, bool>>();
                 satisfyCondition.Add(temp);
 
-                for (int j = 0; j < activatedMSOrder[i].Count-1; ++j)
+                for (int j = 0; j < MSOrder[i].Count-1; ++j)
                 {
-                    foreach(var item in adjacentMSPreconditionStructs[activatedMSOrder[i][j]])  // // skillNumber를 통해 비교가 이루어진다.
+                    foreach(var item in adjacentMSPreconditionStructs[MSOrder[i][j]])  // // skillNumber를 통해 비교가 이루어진다.
                     {
-                        if (item.Precondition_q == activatedMSOrder[i][j + 1])
+                        if (item.Precondition_q == MSOrder[i][j + 1])
                         {
-                            if (playerSkillInformationStructs[activatedMSOrder[i][j]].CurrentLevel >= item.Precondition_Weight)
-                                satisfyCondition[i].Add(new KeyValuePair<int, bool>(skillUICellMSStructs[activatedMSOrder[i][j]].CellNumber, true));
-                            else satisfyCondition[i].Add(new KeyValuePair<int, bool>(skillUICellMSStructs[activatedMSOrder[i][j]].CellNumber, false));
+                            if (playerSkillInformationStructs[MSOrder[i][j]].CurrentLevel >= item.Precondition_Weight)
+                                satisfyCondition[i].Add(new KeyValuePair<int, bool>(skillUICellMSStructs[MSOrder[i][j]].CellNumber, true));
+                            else satisfyCondition[i].Add(new KeyValuePair<int, bool>(skillUICellMSStructs[MSOrder[i][j]].CellNumber, false));
                         }
                     }
                 }
 
-                satisfyCondition[i].Add(new KeyValuePair<int, bool>(skillUICellMSStructs[activatedMSOrder[i][activatedMSOrder[i].Count-1]].CellNumber, false));
+                satisfyCondition[i].Add(new KeyValuePair<int, bool>(skillUICellMSStructs[MSOrder[i][MSOrder[i].Count-1]].CellNumber, false));
             }
 
 
@@ -441,9 +449,9 @@ namespace GameSystem.InGameUI.Skill
                     while (true) // true야 반복, 두 값이 다르면 같으면 지속.
                     {
 
-                        if (satisfyCondition[i][1].Key == activatedLineOrder[i][0]) { break; }
+                        if (satisfyCondition[i][1].Key == CellNumberOrder[i][0]) { break; }
 
-                        activatedLineOrder[i].RemoveAt(0);
+                        CellNumberOrder[i].RemoveAt(0);
                     }
 
                     satisfyCondition[i].RemoveAt(0);
@@ -454,30 +462,30 @@ namespace GameSystem.InGameUI.Skill
         {
             int rowCount = skillUICellStructs.Count / 11;
 
-            for (int i = 0; i < activatedLineOrder.Count; ++i)
+            for (int i = 0; i < CellNumberOrder.Count; ++i)
             {
                 List<int> temp = new List<int>();
 
-                for(int j = 1; j < activatedLineOrder[i].Count; ++j)
+                for(int j = 1; j < CellNumberOrder[i].Count; ++j)
                 {
-                    if(activatedLineOrder[i][j-1]/ rowCount == activatedLineOrder[i][j]/ rowCount)
+                    if(CellNumberOrder[i][j-1]/ rowCount == CellNumberOrder[i][j]/ rowCount)
                     {
-                        for(int k = 0; k < activatedLineOrder[i][j] - activatedLineOrder[i][j - 1]; ++k)
+                        for(int k = 0; k < CellNumberOrder[i][j] - CellNumberOrder[i][j - 1]; ++k)
                         {
-                            temp.Add(activatedLineOrder[i][j - 1] + k);
+                            temp.Add(CellNumberOrder[i][j - 1] + k);
                         }
                     }
                     else
                     {
-                        for(int l = 0; l < (activatedLineOrder[i][j]/ rowCount) - (activatedLineOrder[i][j - 1]/ rowCount); ++l)
+                        for(int l = 0; l < (CellNumberOrder[i][j]/ rowCount) - (CellNumberOrder[i][j - 1]/ rowCount); ++l)
                         {
-                            temp.Add(activatedLineOrder[i][j - 1] + rowCount * l);
+                            temp.Add(CellNumberOrder[i][j - 1] + rowCount * l);
                         }
                     }
                 }
 
                 // 가장 마지막 값은 나중에 추가해줌.
-                temp.Add(activatedLineOrder[i][activatedLineOrder[i].Count-1]);
+                temp.Add(CellNumberOrder[i][CellNumberOrder[i].Count-1]);
 
                 this.cellOrderToBeChanged.Add(temp);
             }
