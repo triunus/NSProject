@@ -327,6 +327,7 @@ namespace GameSystem.InGameUI.Skill
             }
         }
 
+        // CellNumber 위상정렬 시작.
         private void CellUILineTopologySort(int destinationCellNumber)
         {
             List<int> visited = new List<int>();
@@ -336,20 +337,20 @@ namespace GameSystem.InGameUI.Skill
             {
                 List<int> order = new List<int>();
                 visited = Enumerable.Repeat(0, skillUICellStructs.Count).ToList();      // 모든 정점에 대한 방문여부.
-                destinationIsVisited = false;                                           // 목표 정점 방문여부를 나타내는 boolean 값.
+                destinationIsVisited = false;                                           // 목표 정점 방문여부 값.
 
                 // 시작 cellNumber, 방문지점, 목적지 방문여부, 방문기록, 방문 순서.
                 this.CellUILineDFS(cellStartPosition[i], ref destinationCellNumber, ref destinationIsVisited, ref visited, ref order);
 
                 // 목표로한 정점을 방문하였다면,
                 // '목표 정점 -> ... -> 시작 정점'으로 되어있는 정점 순서를 뒤집는다.
-                // 정상으로 돌아온 방문ㅇ
+                // 정상으로 돌아온 방문순서를 CellNumberOrder 객체에 저장.
                 if (destinationIsVisited) { this.CellNumberOrder.Add( Enumerable.Reverse(order).ToList()); }
             }
         }
         private void CellUILineDFS(int startCellNumber, ref int destinationCellNumber, ref bool destinationIsVisited, ref List<int> visited, ref List<int> order)
         {
-            visited[startCellNumber] = 1;
+            visited[startCellNumber] = 1;                       // 현재 정점 방문여부 표시.
 
             // 현재 방문한 정점이, 목표로한 정점과 동이하다면,
             if (startCellNumber == destinationCellNumber) 
@@ -373,6 +374,7 @@ namespace GameSystem.InGameUI.Skill
             // 현재 정점의 연장선에서 목표로한 지점을 방문한 적이 있다면, 현재 정점을 기록한다.
             if (destinationIsVisited) { order.Add(startCellNumber); }
         }
+        // SkillNumber 위상정렬 시작.
         private void CellUIMSTopologySort(SkillUICellMSStruct skillUICellMSStruct)
         {
             List<int> visited = new List<int>();
@@ -382,12 +384,15 @@ namespace GameSystem.InGameUI.Skill
             for (int i = 0; i < this.cellMSStartPosition.Count; ++i)
             {
                 List<int> order = new List<int>();
-                visited = Enumerable.Repeat(0, skillUICellMSStructs.Count).ToList();
-                destinationIsVisited = false;
+                visited = Enumerable.Repeat(0, skillUICellMSStructs.Count).ToList();    // 모든 정점에 대한 방문여부.
+                destinationIsVisited = false;                                           // 목표 정점 방문여부 값.
 
                 // 시작 cellNumber, 방문지점, 목적지 방문여부, 방문기록, 방문 순서.
                 this.CellUIMSDFS(cellMSStartPosition[i], ref destinationSkillNumber, ref destinationIsVisited, ref visited, ref order);
 
+                // 목표로한 정점을 방문하였다면,
+                // '목표 정점 -> ... -> 시작 정점'으로 되어있는 정점 순서를 뒤집는다.
+                // 정상으로 돌아온 방문순서를 MSOrder 객체에 저장.
                 if (destinationIsVisited) { this.MSOrder.Add(Enumerable.Reverse(order).ToList()); }
 
                 order.Clear();
@@ -395,23 +400,28 @@ namespace GameSystem.InGameUI.Skill
         }
         private void CellUIMSDFS(int startSkillNumber, ref int destinationSkillNumber, ref bool destinationIsVisited, ref List<int> visited, ref List<int> order)
         {
-            visited[startSkillNumber] = 1;
+            visited[startSkillNumber] = 1;                      // 현재 정점 방문여부 표시.
 
+            // 현재 방문한 정점이, 목표로한 정점과 동이하다면,
             if (startSkillNumber == destinationSkillNumber)
             {
-                destinationIsVisited = true;
-                order.Add(startSkillNumber);
-                return;
+                destinationIsVisited = true;                    // 목표 정점 방문여부 = true;
+                order.Add(startSkillNumber);                    // 현재 정점 기록.
+                return;                                         // 이전 정점으로 돌아감.
             }
 
+            // 현재 정점에서 갈 수 있는 정점들을 탐색.
             foreach (var item in adjacentMSPreconditionStructs[startSkillNumber])
             {
+                // 다음 방문할 정점이 방문한적이 없으며 && 목표로 한 지점을 방문한 적이 없는지 확인.
                 if (visited[item.Precondition_q] == 0 && !destinationIsVisited)
                 {
+                    // 다음 정점 탐색.
                     CellUIMSDFS(item.Precondition_q, ref destinationSkillNumber, ref destinationIsVisited, ref visited, ref order);
                 }
             }
 
+            // 현재 정점의 연장선에서 목표로한 지점을 방문한 적이 있다면, 현재 정점을 기록한다.
             if (destinationIsVisited) { order.Add(startSkillNumber); }
         }
 
@@ -421,8 +431,9 @@ namespace GameSystem.InGameUI.Skill
 
             for (int i = 0; i < MSOrder.Count; ++i)
             {
-                List<KeyValuePair<int, bool>> temp = new List<KeyValuePair<int, bool>>();
-                satisfyCondition.Add(temp);
+                // LinkedList 정의.
+                List<KeyValuePair<int, bool>> perKeyValuePair = new List<KeyValuePair<int, bool>>();
+                satisfyCondition.Add(perKeyValuePair);
 
                 for (int j = 0; j < MSOrder[i].Count-1; ++j)
                 {
