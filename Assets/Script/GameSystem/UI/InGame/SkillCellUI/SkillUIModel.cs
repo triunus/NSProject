@@ -59,8 +59,8 @@ namespace GameSystem.InGameUI.Skill
         private List<SkillUICellMSStruct> skillUICellMSStructs;                                         // 'SkillCellUI GameObject'를 구분하기 위해 사용한다.      
 
         // List i 번째 스킬에 대한 관련 스킬 및 가중치를 기록하는 구조체이다.
-        private List<LinkedList<SkillUICellMSPreconditionStruct>> adjacentMSPreconditionStructs;        // i 번째 SkillNumber는 q SkillNumber를 배우기 위해, i skillNumber 스킬을 weight만큼 올릴 필요가 있다.
-        private List<LinkedList<SkillUICellMSPreconditionStruct>> MSPreconditionStructs;                // i 번째 SkillNumber를 배우기 위해, q SkillNumberfmf weight만큼 올릴 필요가 있다.
+        private List<LinkedList<SkillUICellMSPreconditionStruct>> adjacentMSPreconditionStructs;        // 'i 번째 SkillNumber는 q SkillNumber를 배우기 위해, i skillNumber 스킬을 weight만큼 필요'하다는 정보를 갖는다.
+        private List<LinkedList<SkillUICellMSPreconditionStruct>> MSPreconditionStructs;                // 'i 번째 SkillNumber를 배우기 위해, q SkillNumberfmf weight만큼 올릴 필요'하다는 정보를 갖는다.
 
         // Skill의 기본 데이터를 갖고 있다.
         private List<SkillInformationStruct> skillInformationStructs;
@@ -150,7 +150,7 @@ namespace GameSystem.InGameUI.Skill
         }
 
         // ISkillCellUIModel 구현
-        // SkillModel 초기 설정. Manager에서 필요한 데이터 가져오기.
+        // Manager에서 필요한 데이터 가져오기 + SkillModel 초기 설정.
         public void InitialSetting(ISkillManagerForModel skillCellUIManager)
         {
             this.skillCellUIManager = skillCellUIManager;
@@ -164,7 +164,9 @@ namespace GameSystem.InGameUI.Skill
             this.FindCellMSStartPosition();             // SkillNumber를 정점으로 사용하는 그래프의 시작 정점 찾기.
 
             this.MakeSkillUICellLineLinkedList();       // CellNumber 간에 순서를 기록한 데이터를 읽어와, 인접리스트를 만든다.
-            this.MakeSkillUICellMSLinkedList();         // SkillNumber 간에 순서를 기록한 데이터를 읽어와, 인접리스트를 만든다.
+            this.MakeSkillUICellMSLinkedList();         // SkillNumber 간에 순서와 가중치를 기록한 데이터를 읽어와, 인접리스트를 만든다.
+
+            this.MakeMSPreconditionLinkedList();   // SkillNumber 간에 순서와 가중치를 기록한 데이터를 읽어와, 특정 스킬에 필요한 skillNumber와 가중치 LinkedList를 만든다.
         }
         public void DecideActivateOrInActivateCell(SkillUICellMSStruct skillUICellMSStruct)
         {
@@ -255,20 +257,22 @@ namespace GameSystem.InGameUI.Skill
                 this.cellMSStartPosition.Add(this.skillUICellMSStructs[skillUICellMSStructs.FindIndex(x => x.CellNumber == cellLineStartPosition[i])].SkillNumber);
             }
         }
+
+        // CellNumber 간에 순서를 기록한 데이터를 읽어와, 인접리스트를 만든다.
         private void MakeSkillUICellLineLinkedList()
         {
             // CellNumber 정점 간의 순서를 기록한 Local 데이터 읽어오기.
             TextAsset skillUICellLinePrecondition_TextAsset = Resources.Load<TextAsset>("GameSystem/SkillData/UI/SkillUICellPrecondition");
             JArray skillUICellLinePrecondition = JArray.Parse(skillUICellLinePrecondition_TextAsset.ToString());
 
-            // LinkedList 정의.
+            // adjacentCellNumberPreconditionStructs LinkedList 정의.
             for (int i = 0; i < skillUICellStructs.Count; ++i)
             {
                 LinkedList<SkillUICellNumberPreconditionStruct> perSkillUICellLine = new LinkedList<SkillUICellNumberPreconditionStruct>();
                 this.adjacentCellNumberPreconditionStructs.Add(perSkillUICellLine);
             }
 
-            // CellNumber 인접리스트 객체 생성.
+            // adjacentCellNumberPreconditionStructs 인접리스트 객체 생성.
             for (int i = 0; i < skillUICellLinePrecondition.Count; ++i)
             {
                 this.adjacentCellNumberPreconditionStructs[(int)skillUICellLinePrecondition[i]["Precondition_p"]].AddLast(
@@ -276,19 +280,21 @@ namespace GameSystem.InGameUI.Skill
                         precondition_q: (int)skillUICellLinePrecondition[i]["Precondition_q"]));
             }
         }
+        // SkillNumber 간에 순서와 가중치를 기록한 데이터를 읽어와, 인접리스트를 만든다.
         private void MakeSkillUICellMSLinkedList()
         {
             // SkillNumber 정점 간의 순서와 가중치를 기록한 Local 데이터 읽어오기.
             TextAsset skillUICellMSPrecondition_TextAsset = Resources.Load<TextAsset>("GameSystem/SkillData/UI/SkillUICellMSPrecondition");
             JArray skillUICellMSPrecondition = JArray.Parse(skillUICellMSPrecondition_TextAsset.ToString());
 
-            // adjacentMSPreconditionStructs
+            // adjacentMSPreconditionStructs LinkedList 정의.
             for (int i = 0; i < this.skillUICellMSStructs.Count; ++i)
             {
                 LinkedList<SkillUICellMSPreconditionStruct> perSkillUICellMS = new LinkedList<SkillUICellMSPreconditionStruct>();
                 this.adjacentMSPreconditionStructs.Add(perSkillUICellMS);
             }
 
+            // adjacentMSPreconditionStructs 인접리스트 객체 생성.
             for (int i = 0; i < skillUICellMSPrecondition.Count; ++i)
             {
                 this.adjacentMSPreconditionStructs[(int)skillUICellMSPrecondition[i]["Precondition_p"]].AddLast(
@@ -296,14 +302,22 @@ namespace GameSystem.InGameUI.Skill
                         precondition_q: (int)skillUICellMSPrecondition[i]["Precondition_q"],
                         precondition_Weight: (int)skillUICellMSPrecondition[i]["Precondition_Weight"]));
             }
+        }
+        // SkillNumber 간에 순서와 가중치를 기록한 데이터를 읽어와, 특정 스킬에 필요한 skillNumber와 가중치 LinkedList를 만든다.
+        private void MakeMSPreconditionLinkedList()
+        {
+            // SkillNumber 정점 간의 순서와 가중치를 기록한 Local 데이터 읽어오기.
+            TextAsset skillUICellMSPrecondition_TextAsset = Resources.Load<TextAsset>("GameSystem/SkillData/UI/SkillUICellMSPrecondition");
+            JArray skillUICellMSPrecondition = JArray.Parse(skillUICellMSPrecondition_TextAsset.ToString());
 
-            // MSPreconditionStructs
+            // MSPreconditionStructs LinkedList 정의.
             for (int i = 0; i < this.skillUICellMSStructs.Count; ++i)
             {
                 LinkedList<SkillUICellMSPreconditionStruct> perSkillUICellMS = new LinkedList<SkillUICellMSPreconditionStruct>();
                 this.MSPreconditionStructs.Add(perSkillUICellMS);
             }
 
+            // MSPreconditionStructs 인접리스트 객체 생성.
             for (int i = 0; i < skillUICellMSPrecondition.Count; ++i)
             {
                 this.MSPreconditionStructs[(int)skillUICellMSPrecondition[i]["Precondition_q"]].AddLast(
