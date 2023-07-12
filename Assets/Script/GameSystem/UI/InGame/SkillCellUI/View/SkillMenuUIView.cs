@@ -7,7 +7,7 @@ namespace GameSystem.InGameUI.Skill
         public void InitialSetting(ISkillUIController skillUIController);
 
         public void ActivateOrUnActivateSkillMenuUI(bool isSkillMenuUIActivated);
-        public void ActivateSkillMenu(SkillMenuType skillMenuType);
+        public void ActivateSkillMenu(SkillTreeType skillTreeType);
     }
 
     // 생성 시, Canvas/UI 안에 들어간다.
@@ -28,8 +28,8 @@ namespace GameSystem.InGameUI.Skill
         // Skill Menu UI Prefab에 직접적으로 존재하는 버튼들에 SkillController 메소드 연결.
         private void ConnectButton()
         {
-            skillMenuUI.GetChild(0).GetChild(3).GetChild(0).GetChild(0).GetComponent<UnityEngine.UI.Button>().onClick.AddListener(delegate { this.skillUIController.ChangeSkillMenuType(SkillMenuType.Necromancy); });
-            skillMenuUI.GetChild(0).GetChild(3).GetChild(1).GetChild(0).GetComponent<UnityEngine.UI.Button>().onClick.AddListener(delegate { this.skillUIController.ChangeSkillMenuType(SkillMenuType.Class); });
+            skillMenuUI.GetChild(0).GetChild(3).GetChild(0).GetChild(0).GetComponent<UnityEngine.UI.Button>().onClick.AddListener(delegate { this.skillUIController.ChangeSkillMenuType(SkillTreeType.Necromancy); });
+            skillMenuUI.GetChild(0).GetChild(3).GetChild(1).GetChild(0).GetComponent<UnityEngine.UI.Button>().onClick.AddListener(delegate { this.skillUIController.ChangeSkillMenuType(SkillTreeType.Class); });
         }
 
         // ISkillMenuUIView의 초기설정 메소드.
@@ -37,11 +37,11 @@ namespace GameSystem.InGameUI.Skill
         {
             this.skillUIController = skillUIController;
 
-            this.CreateNecromancySkillCellUI();
+            this.CreateNecromancySkillUICell();
             //            this.CreateClassSkillCellUI();
         }
         // Necromancy Skill Tree 하위 SkillCellUI 생성 메소드
-        private void CreateNecromancySkillCellUI()
+        private void CreateNecromancySkillUICell()
         {
             RectTransform necromancySkillContentMenuUI_V = this.skillMenuUI.GetChild(2).GetChild(0).GetChild(2).GetChild(0).GetChild(0).GetComponent<RectTransform>();
             RectTransform VContentSV = necromancySkillContentMenuUI_V.GetChild(0).GetComponent<RectTransform>();
@@ -51,7 +51,7 @@ namespace GameSystem.InGameUI.Skill
             RectTransform necromancySkillContentMenuUI_H = this.skillMenuUI.GetChild(2).GetChild(0).GetChild(2).GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetComponent<RectTransform>();
 
             // skillUIController 객체에 '매개변수로 전달된 RectTransform 객체' 하위에 SkillCellUI Prefab 생성 요청.
-            this.skillUIController.CreateSkillCellUI(necromancySkillContentMenuUI_H, SkillMenuType.Necromancy);
+            this.skillUIController.CreateSkillUICell(necromancySkillContentMenuUI_H, SkillTreeType.Necromancy);
 
             // Skill Tree에 생성되는 SkillUICell Prefab의 개수에 따라 Skill Menu UI 객체 크기 조정.
             UnityEngine.UI.GridLayoutGroup gridLayoutGroup = necromancySkillContentMenuUI_H.GetComponent<UnityEngine.UI.GridLayoutGroup>();
@@ -67,10 +67,10 @@ namespace GameSystem.InGameUI.Skill
 
             necromancySkillContentMenuUI_V.sizeDelta = new Vector2(necromancySkillContentMenuUI_V.sizeDelta.x, height);
         }
-        private void CreateClassSkillCellUI()
+        private void CreateClassSkillUICell()
         {
             //            this.classSkillMenuContentUI = this.skillMenuUI.GetChild(2).GetChild(1).GetChild(2).GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetComponent<RectTransform>();
-            //            this.skillUIController.CreateSkillCellUI(classSkillMenuContentUI, SkillMenuType.Class);
+            //            this.skillUIController.CreateSkillUICell(classSkillMenuContentUI, SkillTreeType.Class);
         }
 
         // 사용자와 SkillMenuUI Prefab과의 상호작용.
@@ -84,7 +84,7 @@ namespace GameSystem.InGameUI.Skill
         }
         // Skill Menu UI의 우측 상단 버튼을 클릭하면, 호출되는 메소드이다.
         // Skill Menu UI의 내용(주제)을 변경하는데 사용한다.
-        public void ActivateSkillMenu(SkillMenuType skillMenuType)
+        public void ActivateSkillMenu(SkillTreeType skillTreeType)
         {
             // Skill Tree 하위 오브젝트를 모두 비활성화
             for(int i = 0; i < menuTypeContentUI.childCount; ++i)
@@ -92,14 +92,14 @@ namespace GameSystem.InGameUI.Skill
                 this.menuTypeContentUI.GetChild(i).gameObject.SetActive(false);
             }
 
-            // 매개변수로 받은 SkillMenuType과 관련된 Skill Tree 게임 오브젝트를 활성화.
-            switch (skillMenuType)
+            // 매개변수로 받은 SkillTreeType과 관련된 Skill Tree 게임 오브젝트를 활성화.
+            switch (skillTreeType)
             {
-                case SkillMenuType.Necromancy:
-                    this.menuTypeContentUI.GetChild((int)SkillMenuType.Necromancy).gameObject.SetActive(true);
+                case SkillTreeType.Necromancy:
+                    this.menuTypeContentUI.GetChild((int)SkillTreeType.Necromancy).gameObject.SetActive(true);
                     break;
-                case SkillMenuType.Class:
-                    this.menuTypeContentUI.GetChild((int)SkillMenuType.Class).gameObject.SetActive(true);
+                case SkillTreeType.Class:
+                    this.menuTypeContentUI.GetChild((int)SkillTreeType.Class).gameObject.SetActive(true);
                     break;                   
             }
         }

@@ -14,10 +14,10 @@ namespace GameSystem.InGameUI.Skill
 
     public interface ISkillManagerForModel
     {
-        public ref List<SkillUICellStruct> GetSkillUICellLineStructs();
-        public ref List<SkillUICellMSStruct> GetSkillUICellMSStructs();
-        public ref List<SkillInformationStruct> GetSkillInformationStruct();
-        public ref List<PlayerSkillInformationStruct> GetPlayerSkillInformationStruct();
+        public ref List<SkillUICellStruct> SkillUICellStructs { get; }
+        public ref List<SkillUICellMainSubStruct> SkillUICellMainSubStructs { get; }
+        public ref List<SkillInformationStruct> SkillInformationStruct { get; }
+        public ref List<PlayerSkillInformationStruct> PlayerSkillInformationStruct { get; }
 
         public int OwnManaStone { get; set; }
     }
@@ -35,34 +35,23 @@ namespace GameSystem.InGameUI.Skill
         private ISkillUIController skillCellUIController;
 
         private List<SkillUICellStruct> skillUICellStructs;
-        private List<SkillUICellMSStruct> skillUICellMSStructs;
+        private List<SkillUICellMainSubStruct> skillUICellMainSubStructs;
 
         private List<SkillInformationStruct> skillInformationStructs;
         private List<PlayerSkillInformationStruct> playerSkillInformationStructs;
 
         // ISkillManagerForModel ±¸Çö
-        public ref List<SkillUICellStruct> GetSkillUICellLineStructs()
-        {
-            return ref this.skillUICellStructs;
-        }
-        public ref List<SkillUICellMSStruct> GetSkillUICellMSStructs()
-        {
-            return ref this.skillUICellMSStructs;
-        }
-        public ref List<SkillInformationStruct> GetSkillInformationStruct()
-        {
-            return ref this.skillInformationStructs;
-        }
-        public ref List<PlayerSkillInformationStruct> GetPlayerSkillInformationStruct()
-        {
-            return ref this.playerSkillInformationStructs;
-        }
+        public ref List<SkillUICellStruct> SkillUICellStructs { get { return ref this.SkillUICellStructs; } }
+        public ref List<SkillUICellMainSubStruct> SkillUICellMainSubStructs { get { return ref this.skillUICellMainSubStructs; } }
+        public ref List<SkillInformationStruct> SkillInformationStruct { get { return ref this.skillInformationStructs; } }
+        public ref List<PlayerSkillInformationStruct> PlayerSkillInformationStruct { get { return ref this.playerSkillInformationStructs; } }
+
         public int OwnManaStone { get { return this.playerManager.OwnManaStone; } set { this.playerManager.OwnManaStone = value; } }
 
         private void Awake()
         {
             this.skillUICellStructs = new List<SkillUICellStruct>();
-            this.skillUICellMSStructs = new List<SkillUICellMSStruct>();
+            this.skillUICellMainSubStructs = new List<SkillUICellMainSubStruct>();
             this.skillInformationStructs = new List<SkillInformationStruct>();
             this.playerSkillInformationStructs = new List<PlayerSkillInformationStruct>();
 
@@ -108,7 +97,7 @@ namespace GameSystem.InGameUI.Skill
             {
                 SkillUICellStruct SkillUICellStruct = new SkillUICellStruct(
                     cellNumber: (int)skillUICell[i]["CellNumber"],
-                    cellContent: (CellContent)System.Enum.Parse(typeof(CellContent), skillUICell[i]["Content"].ToString()),
+                    cellContent: (CellContent)System.Enum.Parse(typeof(CellContent), skillUICell[i]["CellContent"].ToString()),
                     lineNumber: (int)skillUICell[i]["LineNumber"]
                     );
 
@@ -117,17 +106,17 @@ namespace GameSystem.InGameUI.Skill
         }
         private void RecodeSkillUICellMSInformation()
         {
-            TextAsset skillUICellMS_TextAsset = Resources.Load<TextAsset>("GameSystem/SkillData/UI/SkillUICellMS");
-            JArray skillUICellMS = JArray.Parse(skillUICellMS_TextAsset.ToString());
+            TextAsset skillUICellMainSub_TextAsset = Resources.Load<TextAsset>("GameSystem/SkillData/UI/SkillUICellMainSub");
+            JArray skillUICellMainSub = JArray.Parse(skillUICellMainSub_TextAsset.ToString());
 
-            for (int i = 0; i < skillUICellMS.Count; ++i)   
+            for (int i = 0; i < skillUICellMainSub.Count; ++i)   
             {
-                SkillUICellMSStruct SkillUICellStruct = new SkillUICellMSStruct(
-                    skillNumber: (int)skillUICellMS[i]["SkillNumber"],
-                    cellNumber: (int)skillUICellMS[i]["CellNumber"]
+                SkillUICellMainSubStruct SkillUICellStruct = new SkillUICellMainSubStruct(
+                    skillNumber: (int)skillUICellMainSub[i]["SkillNumber"],
+                    cellNumber: (int)skillUICellMainSub[i]["CellNumber"]
                     );
 
-                this.skillUICellMSStructs.Add(SkillUICellStruct);
+                this.skillUICellMainSubStructs.Add(SkillUICellStruct);
             }
         }
         private void RecordSkillInformation()

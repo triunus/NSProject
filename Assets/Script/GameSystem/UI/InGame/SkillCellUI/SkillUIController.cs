@@ -8,7 +8,7 @@ namespace GameSystem.InGameUI.Skill
         Fixed
     }
 
-    public enum SkillMenuType
+    public enum SkillTreeType
     {
         Necromancy = 0,
         Class = 1
@@ -18,16 +18,16 @@ namespace GameSystem.InGameUI.Skill
     public interface ISkillUIController_For_InteractionSkillImageUIAndMouseInSkillMenuUI
     {
         // view 용
-        public void MouseClickInteraction(SkillUICellMSStruct skillUICellMSStruct);        // skill 아이콘 클릭 이벤트
-        public void MouseEnterInteraction(SkillUICellMSStruct skillUICellMSStruct);
-        public void MouseExitInteration(SkillUICellMSStruct skillUICellMSStruct);
+        public void MouseClickInteraction(SkillUICellMainSubStruct SkillUICellMainSubStruct);        // skill 아이콘 클릭 이벤트
+        public void MouseEnterInteraction(SkillUICellMainSubStruct SkillUICellMainSubStruct);
+        public void MouseExitInteration(SkillUICellMainSubStruct SkillUICellMainSubStruct);
     }
 
     // SkillMenuUIView 용
     public interface ISkillUIController_For_SkillMenuUIView
     {
-        public void CreateSkillCellUI(RectTransform skillContentRectTransform, SkillMenuType skillMenuType);
-        public void ChangeSkillMenuType(SkillMenuType skillMenuType);   // skillMenuType 변경
+        public void CreateSkillUICell(RectTransform skillContentRectTransform, SkillTreeType SkillTreeType);
+        public void ChangeSkillMenuType(SkillTreeType SkillTreeType);   // SkillTreeType 변경
     }
 
     // ISkillDescriptionUIView 용
@@ -49,13 +49,13 @@ namespace GameSystem.InGameUI.Skill
         private ISkillUIModel skillUIModel;
 
         private ISkillMenuUIView skillMenuUIView;
-        private System.Collections.Generic.List<ISkillCellUIView> necromancySkillCellUIViews;
-        private System.Collections.Generic.List<ISkillCellUIView> classSkillCellUIViews;
+        private System.Collections.Generic.List<ISkillUICellView> necromancySkillCellUIViews;
+        private System.Collections.Generic.List<ISkillUICellView> classSkillCellUIViews;
 
         private ISkillDescriptionUIView temporarySkillDescriptionUIView;
         private ISkillDescriptionUIView fixedSkillDescriptionUIView;
 
-        private SkillMenuType skillMenuType;
+        private SkillTreeType SkillTreeType;
 
         private bool skillMenuUIIsCreated;
         private bool fixedSkillDescriptionUIIsCreated;
@@ -63,13 +63,13 @@ namespace GameSystem.InGameUI.Skill
 
         private void Awake()
         {
-            this.necromancySkillCellUIViews = new System.Collections.Generic.List<ISkillCellUIView>();
-            this.classSkillCellUIViews = new System.Collections.Generic.List<ISkillCellUIView>();
+            this.necromancySkillCellUIViews = new System.Collections.Generic.List<ISkillUICellView>();
+            this.classSkillCellUIViews = new System.Collections.Generic.List<ISkillUICellView>();
 
             this.temporarySkillDescriptionUIView = null;
             this.fixedSkillDescriptionUIView = null;
 
-            skillMenuType = SkillMenuType.Necromancy;
+            SkillTreeType = SkillTreeType.Necromancy;
 
             skillMenuUIIsCreated = false;
             fixedSkillDescriptionUIIsCreated = false;
@@ -115,7 +115,7 @@ namespace GameSystem.InGameUI.Skill
             }
 
             this.skillMenuUIView.ActivateOrUnActivateSkillMenuUI(isActivated);
-            if (isActivated) this.skillMenuUIView.ActivateSkillMenu(SkillMenuType.Necromancy);
+            if (isActivated) this.skillMenuUIView.ActivateSkillMenu(SkillTreeType.Necromancy);
         }
         // Skill Menu UI Prefab이 생성 메소드.
         private void CreateSkillMenuUI()
@@ -129,96 +129,96 @@ namespace GameSystem.InGameUI.Skill
             // skillMenuUIView 초기설정 메소드 호출.
             this.skillMenuUIView.InitialSetting(this);
         }
-        public void CreateSkillCellUI(RectTransform skillContentRectTransform, SkillMenuType skillMenuType)
+        public void CreateSkillUICell(RectTransform skillContentRectTransform, SkillTreeType SkillTreeType)
         {
-            System.Collections.Generic.List<SkillUICellStruct> tempSkillUICellLineStructs = null;
+            System.Collections.Generic.List<SkillUICellStruct> tempSkillUICellStructs = null;
 
-            if (skillMenuType == SkillMenuType.Necromancy) tempSkillUICellLineStructs = this.skillUIModel.SkillUICellStructs;
-//            else tempSkillUICellLineStructs = this.skillUIModel.ClassSkillUICellLineStructs;      // 차후 생성 예정.
+            if (SkillTreeType == SkillTreeType.Necromancy) tempSkillUICellStructs = this.skillUIModel.SkillUICellStructs;
+//            else tempSkillUICellStructs = this.skillUIModel.ClassSkillUICellLineStructs;      // 차후 생성 예정.
 
-            System.Collections.Generic.List<SkillUICellMSStruct> tempSkillUICellMSStructs = this.skillUIModel.SkillUICellMSStructs;
+            System.Collections.Generic.List<SkillUICellMainSubStruct> tempSkillUICellMainSubStructs = this.skillUIModel.SkillUICellMainSubStructs;
             System.Collections.Generic.List<SkillInformationStruct> tempSkillInformationStructs = this.skillUIModel.SkillInformationStructs;
 
             int tempSkillNumber;
 
             // skillUICellStructs 개수만큼 SkillUICell Prefab 생성.
-            for (int i = 0; i < tempSkillUICellLineStructs.Count; ++i)
+            for (int i = 0; i < tempSkillUICellStructs.Count; ++i)
             {
-                ISkillCellUIView skillCellUIView = Instantiate(Resources.Load<RectTransform>("Prefab/UI/SkillUI/SkillUICell"), skillContentRectTransform).GetComponent<ISkillCellUIView>();
+                ISkillUICellView SkillUICellView = Instantiate(Resources.Load<RectTransform>("Prefab/UI/SkillUI/SkillUICell"), skillContentRectTransform).GetComponent<ISkillUICellView>();
 
-                tempSkillNumber = tempSkillUICellMSStructs.FindIndex(x => x.CellNumber == tempSkillUICellLineStructs[i].CellNumber);
+                tempSkillNumber = tempSkillUICellMainSubStructs.FindIndex(x => x.CellNumber == tempSkillUICellStructs[i].CellNumber);
 
                 // skillUICellStructs.CellContent의 값을 이용하여, SkillUICell Prefab의 역할을 구분. 초기설정 메소드 구분하여 호출.
-                switch (tempSkillUICellLineStructs[i].CellContent)
+                switch (tempSkillUICellStructs[i].CellContent)
                 {
                     case CellContent.non:
-                        skillCellUIView.InitialNonCell(ref this.skillUIModel, this);
+                        SkillUICellView.InitialNonCell(ref this.skillUIModel, this);
                         break;
                     case CellContent.line:
                     case CellContent.interchange:
-                        skillCellUIView.InitizlLineCell(ref this.skillUIModel, this, tempSkillUICellLineStructs[i]);
+                        SkillUICellView.InitizlLineCell(ref this.skillUIModel, this, tempSkillUICellStructs[i]);
                         break;
                     case CellContent.sub:
                     case CellContent.main:
-                        skillCellUIView.InitializeMainAndSubCell(ref this.skillUIModel, this, tempSkillUICellLineStructs[i], tempSkillUICellMSStructs[tempSkillNumber], tempSkillInformationStructs[tempSkillNumber]);
+                        SkillUICellView.InitializeMainAndSubCell(ref this.skillUIModel, this, tempSkillUICellStructs[i], tempSkillUICellMainSubStructs[tempSkillNumber], tempSkillInformationStructs[tempSkillNumber]);
                         break;
                 }
 
-                this.necromancySkillCellUIViews.Add(skillCellUIView);
+                this.necromancySkillCellUIViews.Add(SkillUICellView);
             }
         }
-        private void CreateSkillDescriptionUI(SkillDescriptionType skillDescriptionType, SkillUICellMSStruct skillUICellMSStruct)
+        private void CreateSkillDescriptionUI(SkillDescriptionType skillDescriptionType, SkillUICellMainSubStruct SkillUICellMainSubStruct)
         {
             if (skillDescriptionType == SkillDescriptionType.Temporary)
             {
                 this.temporarySkillDescriptionUIView = Instantiate(Resources.Load<RectTransform>("Prefab/UI/SkillUI/TemporarySkillDescriptionUI"), GameObject.FindWithTag("UIManager").GetComponent<RectTransform>()).GetComponent<SkillDescriptionUIView>(); ;
-                this.temporarySkillDescriptionUIView.InitialSetting(ref this.skillUIModel, this, skillDescriptionType, skillUICellMSStruct,
-                ref this.skillUIModel.SkillInformationStructs, this.skillUIModel.GetMSPreconditionStruct(skillUICellMSStruct.SkillNumber));
+                this.temporarySkillDescriptionUIView.InitialSetting(ref this.skillUIModel, this, skillDescriptionType, SkillUICellMainSubStruct,
+                ref this.skillUIModel.SkillInformationStructs, this.skillUIModel.GetMainSubPreconditionStruct(SkillUICellMainSubStruct.SkillNumber));
             }
             else
             {
                 this.fixedSkillDescriptionUIView = Instantiate(Resources.Load<RectTransform>("Prefab/UI/SkillUI/FixedSkillDescriptionUI"), GameObject.FindWithTag("UIManager").GetComponent<RectTransform>()).GetComponent<SkillDescriptionUIView>(); ;
-                this.fixedSkillDescriptionUIView.InitialSetting(ref this.skillUIModel, this, skillDescriptionType, skillUICellMSStruct,
-                ref this.skillUIModel.SkillInformationStructs, this.skillUIModel.GetMSPreconditionStruct(skillUICellMSStruct.SkillNumber));
+                this.fixedSkillDescriptionUIView.InitialSetting(ref this.skillUIModel, this, skillDescriptionType, SkillUICellMainSubStruct,
+                ref this.skillUIModel.SkillInformationStructs, this.skillUIModel.GetMainSubPreconditionStruct(SkillUICellMainSubStruct.SkillNumber));
             }
         }
 
 
         // InteractionSkillImageUIAndMouseInSkillMenuUI 구현
-        public void MouseClickInteraction(SkillUICellMSStruct skillUICellMSStruct)
+        public void MouseClickInteraction(SkillUICellMainSubStruct SkillUICellMainSubStruct)
         {
-            this.skillUIModel.DecideActivateOrInActivateCell(skillUICellMSStruct);
+            this.skillUIModel.DecideActivateOrInActivateCell(SkillUICellMainSubStruct);
 
             if (!this.fixedSkillDescriptionUIIsCreated)
             {
                 this.fixedSkillDescriptionUIIsCreated = true;
-                this.CreateSkillDescriptionUI(SkillDescriptionType.Fixed, skillUICellMSStruct);
+                this.CreateSkillDescriptionUI(SkillDescriptionType.Fixed, SkillUICellMainSubStruct);
             }
-            else if (this.fixedSkillDescriptionUIIsCreated && this.fixedSkillDescriptionUIView.SkillNumber == skillUICellMSStruct.SkillNumber)
+            else if (this.fixedSkillDescriptionUIIsCreated && this.fixedSkillDescriptionUIView.SkillNumber == SkillUICellMainSubStruct.SkillNumber)
             {
                 this.fixedSkillDescriptionUIIsCreated = false;
                 this.fixedSkillDescriptionUIView.Destroy();
             }
-            else if (this.fixedSkillDescriptionUIIsCreated && this.fixedSkillDescriptionUIView.SkillNumber != skillUICellMSStruct.SkillNumber)
+            else if (this.fixedSkillDescriptionUIIsCreated && this.fixedSkillDescriptionUIView.SkillNumber != SkillUICellMainSubStruct.SkillNumber)
             {
                 this.fixedSkillDescriptionUIView.Destroy();
-                this.CreateSkillDescriptionUI(SkillDescriptionType.Fixed, skillUICellMSStruct);
+                this.CreateSkillDescriptionUI(SkillDescriptionType.Fixed, SkillUICellMainSubStruct);
             }
         }
-        public void MouseEnterInteraction(SkillUICellMSStruct skillUICellMSStruct)
+        public void MouseEnterInteraction(SkillUICellMainSubStruct SkillUICellMainSubStruct)
         {
-            this.CreateSkillDescriptionUI(SkillDescriptionType.Temporary, skillUICellMSStruct);
+            this.CreateSkillDescriptionUI(SkillDescriptionType.Temporary, SkillUICellMainSubStruct);
         }
-        public void MouseExitInteration(SkillUICellMSStruct skillUICellMSStruct)
+        public void MouseExitInteration(SkillUICellMainSubStruct SkillUICellMainSubStruct)
         {
             this.temporarySkillDescriptionUIView.Destroy();
             this.temporarySkillDescriptionUIView = null;
         }
 
         // ISkillUIController_For_SkillMenuUIView 구현
-        public void ChangeSkillMenuType(SkillMenuType skillMenuType)
+        public void ChangeSkillMenuType(SkillTreeType SkillTreeType)
         {
-            this.skillMenuUIView.ActivateSkillMenu(skillMenuType);
+            this.skillMenuUIView.ActivateSkillMenu(SkillTreeType);
         }
 
         // ISkillUIController_For_ISkillDescriptionUIView 구현

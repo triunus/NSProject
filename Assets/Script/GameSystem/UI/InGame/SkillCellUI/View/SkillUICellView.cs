@@ -10,14 +10,14 @@ namespace GameSystem.InGameUI.Skill
         Not
     }
 
-    public interface ISkillCellUIView
+    public interface ISkillUICellView
     {
         public void InitialNonCell(ref ISkillUIModel skillUIModel, ISkillUIController skillUIController);
-        public void InitizlLineCell(ref ISkillUIModel skillUIModel, ISkillUIController skillUIController, SkillUICellStruct SkillUICellStruct);
-        public void InitializeMainAndSubCell(ref ISkillUIModel skillUIModel, ISkillUIController skillUIController, SkillUICellStruct SkillUICellStruct, SkillUICellMSStruct skillUICellMSStruct, SkillInformationStruct skillInformationStruct);
+        public void InitizlLineCell(ref ISkillUIModel skillUIModel, ISkillUIController skillUIController, SkillUICellStruct skillUICellStruct);
+        public void InitializeMainAndSubCell(ref ISkillUIModel skillUIModel, ISkillUIController skillUIController, SkillUICellStruct skillUICellStruct, SkillUICellMainSubStruct SkillUICellMainSubStruct, SkillInformationStruct skillInformationStruct);
     }
 
-    public class SkillCellUIView : MonoBehaviour, ISkillCellUIView, ICellOrderToBeChangedObserverForView, IPlayerSkillInformationObserverForView
+    public class SkillUICellView : MonoBehaviour, ISkillUICellView, ICellOrderToBeChangedObserverForView, IPlayerSkillInformationObserverForView
     {
         private ICellOrderToBeChangedObserver cellOrderToBeChangedObserver;     // 동적 Observer
         private IPlayerSkillInformationObserver playerSkillInformationObserver; // 동적 Observer
@@ -25,7 +25,7 @@ namespace GameSystem.InGameUI.Skill
         private ISkillUIController skillUIController;
 
         private SkillUICellStruct SkillUICellStruct;                    // 고정
-        private SkillUICellMSStruct skillUICellMSStruct;                        // 고정
+        private SkillUICellMainSubStruct SkillUICellMainSubStruct;                        // 고정
         private SkillInformationStruct skillInformationStruct;                  // 고정
 
         private PlayerSkillInformationStruct playerSkillInformationStruct;      // 동적
@@ -41,7 +41,7 @@ namespace GameSystem.InGameUI.Skill
             this.playerSkillInformationObserver = null;
         }
 
-        // SkillUICell Prefab의 역할에 따라, ISkillCellUIView 초기 설정 메소드를 나누었다.
+        // SkillUICell Prefab의 역할에 따라, ISkillUICellView 초기 설정 메소드를 나누었다.
         public void InitialNonCell(ref ISkillUIModel skillUIModel, ISkillUIController skillUIController) {
             this.skillUIController = skillUIController;
         }
@@ -56,12 +56,12 @@ namespace GameSystem.InGameUI.Skill
             this.InitializeCellLine();                                      // SkillUICellStruct.LineNumber를 이용한, 그래프 간선 그리기.
         }
         public void InitializeMainAndSubCell(ref ISkillUIModel skillUIModel, ISkillUIController skillUIController,
-            SkillUICellStruct SkillUICellStruct, SkillUICellMSStruct skillUICellMSStruct, SkillInformationStruct skillInformationStruct)
+            SkillUICellStruct skillUICellStruct, SkillUICellMainSubStruct skillUICellMainSubStruct, SkillInformationStruct skillInformationStruct)
         {
             this.skillUIController = skillUIController;
 
-            this.SkillUICellStruct = SkillUICellStruct;
-            this.skillUICellMSStruct = skillUICellMSStruct;
+            this.SkillUICellStruct = skillUICellStruct;
+            this.SkillUICellMainSubStruct = skillUICellMainSubStruct;
             this.skillInformationStruct = skillInformationStruct;
 
             this.RegisterCellOrderToBeChangedObserver(ref skillUIModel);    // CellOrderToBeChanged 데이터에 대한 Obserever 등록(구독).
@@ -110,7 +110,7 @@ namespace GameSystem.InGameUI.Skill
                 this.myRectTransform.GetChild(1).GetChild(0).GetChild(1).gameObject.SetActive(true);
                 // 스킬 이미지에 존재하는 IInteractionSkillImageUIAndMouseInSkillMenuUIView와 SkillUIController 연결하기.
                 this.myRectTransform.GetChild(1).GetChild(0).GetChild(1).GetChild(1).GetChild(0).
-                    GetComponent<IInteractionSkillImageUIAndMouseInSkillMenuUIView>().InitialSetting(ref this.skillUIController, ref this.skillUICellMSStruct);
+                    GetComponent<IInteractionSkillImageUIAndMouseInSkillMenuUIView>().InitialSetting(ref this.skillUIController, ref this.SkillUICellMainSubStruct);
 
                 this.degreeOfSkillLevel = this.myRectTransform.GetChild(1).GetChild(0).GetChild(1).GetChild(0).GetComponent<UnityEngine.UI.Image>();
             }
@@ -121,7 +121,7 @@ namespace GameSystem.InGameUI.Skill
                 this.myRectTransform.GetChild(1).GetChild(1).GetChild(1).gameObject.SetActive(true);
                 // 스킬 이미지에 존재하는 IInteractionSkillImageUIAndMouseInSkillMenuUIView와 SkillUIController 연결하기.
                 this.myRectTransform.GetChild(1).GetChild(1).GetChild(1).GetChild(1).GetChild(0).
-                    GetComponent<IInteractionSkillImageUIAndMouseInSkillMenuUIView>().InitialSetting(ref this.skillUIController, ref this.skillUICellMSStruct);
+                    GetComponent<IInteractionSkillImageUIAndMouseInSkillMenuUIView>().InitialSetting(ref this.skillUIController, ref this.SkillUICellMainSubStruct);
 
                 this.degreeOfSkillLevel = this.myRectTransform.GetChild(1).GetChild(1).GetChild(1).GetChild(0).GetComponent< UnityEngine.UI.Image>();
             }
@@ -170,7 +170,7 @@ namespace GameSystem.InGameUI.Skill
         }
         public void UpdatePlayerSkillInformationObserver()
         {
-            this.playerSkillInformationStruct = this.playerSkillInformationObserver.GetPlayerSkillInformation(this.skillUICellMSStruct.SkillNumber);
+            this.playerSkillInformationStruct = this.playerSkillInformationObserver.GetPlayerSkillInformation(this.SkillUICellMainSubStruct.SkillNumber);
             this.DisplayDegreeOfSkillLevel();
         }
 
