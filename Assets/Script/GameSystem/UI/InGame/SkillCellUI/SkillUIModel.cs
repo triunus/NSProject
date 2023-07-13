@@ -346,6 +346,7 @@ namespace GameSystem.InGameUI.Skill
                 if (destinationIsVisited) { this.cellNumberOrder.Add( Enumerable.Reverse(order).ToList()); }
             }
         }
+        // CellNumber DFS 시작
         private void CellNumberDFS(int startCellNumber, ref int destinationCellNumber, ref bool destinationIsVisited, ref List<int> visited, ref List<int> order)
         {
             visited[startCellNumber] = 1;                       // 현재 정점 방문여부 표시.
@@ -396,6 +397,7 @@ namespace GameSystem.InGameUI.Skill
                 order.Clear();
             }
         }
+        // Skillumber DFS 시작
         private void SkillNumberDFS(int startSkillNumber, ref int destinationSkillNumber, ref bool destinationIsVisited, ref List<int> visited, ref List<int> order)
         {
             visited[startSkillNumber] = 1;                      // 현재 정점 방문여부 표시.
@@ -441,8 +443,9 @@ namespace GameSystem.InGameUI.Skill
                 }
             }
         }
-        // CellContent가 Main, Sub, Interchange Cell만 방문하여, CellNumberOrder 값에 공백이 생긴다.
-        // CellNumberOrder은 해당 객체의 다음 CellNumber가 있는 옹
+        // CellContent가 Main, Sub, Interchange Cell만 갖는다. 따라서 CellContent가 Non과 Line인 값의 Cell을 명시하지 못한다.
+        // 즉, 활설화 시키고 싶은 Cell에 공백이 생긴다.
+        // 따라서, 빠진 Cell들의 CellNumber를 CellNumberOrder에 넣어주는 과정을 거친다.
         private void ExtractCellNumberOrderToBeChanged()
         {
             int rowCount = this.skillUICellStructs.Count / 11;
