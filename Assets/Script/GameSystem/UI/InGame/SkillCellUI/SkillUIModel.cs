@@ -55,8 +55,8 @@ namespace GameSystem.InGameUI.Skill
         private List<SkillUICellStruct> skillUICellStructs;                                     // SkillUICell의 기본 정보를 갖고 있다.
         private List<SkillUICellMainSubStruct> skillUICellMainSubStructs;                            // SkillNumber와 CellNumber를 갖고 있어, 각 SkillUICell GameObject들을 구분하는데 사용된다.
 
-        private List<LinkedList<SkillUICellVertexPreconditionStruct>> adjacentCellNumberStructs;    // SkillUICell.CellNumber 들 간의 순서를 표현하는 정보가 기록됨.
-        private List<LinkedList<SkillUICellVertexPreconditionStruct>> adjacentSkillNumberStructs;   // skillInformationStructs.SkillNumber 들 간의 순서를 표현하는 정보가 기록됨.
+        private List<LinkedList<SkillUICellVertexAndWeightPreconditionStruct>> adjacentCellNumberStructs;    // SkillUICell.CellNumber 들 간의 순서를 표현하는 정보가 기록됨.
+        private List<LinkedList<SkillUICellVertexAndWeightPreconditionStruct>> adjacentSkillNumberAndWeightStructs;   // skillInformationStructs.SkillNumber 들 간의 순서를 표현하는 정보가 기록됨.
 
         private List<LinkedList<SkillNumberPreconditionStruct>> skillNumberPreconditionStructs;     // List i 번째 스킬에 대한 관련 스킬 및 가중치를 기록하는 구조체이다.
 
@@ -133,8 +133,8 @@ namespace GameSystem.InGameUI.Skill
             this.skillUICellStructs = new List<SkillUICellStruct>();
             this.skillUICellMainSubStructs = new List<SkillUICellMainSubStruct>();
 
-            this.adjacentCellNumberStructs = new List<LinkedList<SkillUICellVertexPreconditionStruct>>();
-            this.adjacentSkillNumberStructs = new List<LinkedList<SkillUICellVertexPreconditionStruct>>();
+            this.adjacentCellNumberStructs = new List<LinkedList<SkillUICellVertexAndWeightPreconditionStruct>>();
+            this.adjacentSkillNumberAndWeightStructs = new List<LinkedList<SkillUICellVertexAndWeightPreconditionStruct>>();
             this.skillNumberPreconditionStructs = new List<LinkedList<SkillNumberPreconditionStruct>>();
 
             this.cellNumberStartPosition = new List<int>();
@@ -161,7 +161,7 @@ namespace GameSystem.InGameUI.Skill
             this.FindSkillNumberStartPosition();             // SkillNumber를 정점으로 사용하는 그래프의 시작 정점 찾기.
 
             this.MakeAdjacentCellNumberLinkedList();       // CellNumber 간에 순서를 기록한 데이터를 읽어와, 인접리스트를 만든다.
-            this.MakeAdjacentSkillNumberLinkedList();         // SkillNumber 간에 순서와 가중치를 기록한 데이터를 읽어와, 인접리스트를 만든다.
+            this.MakeAdjacentSkillNumberAndWeightLinkedList();         // SkillNumber 간에 순서와 가중치를 기록한 데이터를 읽어와, 인접리스트를 만든다.
 
             this.MakeMainSubPreconditionLinkedList();   // SkillNumber 간에 순서와 가중치를 기록한 데이터를 읽어와, 특정 스킬에 필요한 skillNumber와 가중치 LinkedList를 만든다.
         }
@@ -266,7 +266,7 @@ namespace GameSystem.InGameUI.Skill
             // adjacentCellNumberStructs LinkedList 정의.
             for (int i = 0; i < skillUICellStructs.Count; ++i)
             {
-                LinkedList<SkillUICellVertexPreconditionStruct> perSkillUICellLine = new LinkedList<SkillUICellVertexPreconditionStruct>();
+                LinkedList<SkillUICellVertexAndWeightPreconditionStruct> perSkillUICellLine = new LinkedList<SkillUICellVertexAndWeightPreconditionStruct>();
                 this.adjacentCellNumberStructs.Add(perSkillUICellLine);
             }
 
@@ -274,30 +274,31 @@ namespace GameSystem.InGameUI.Skill
             for (int i = 0; i < skillUICellLinePrecondition.Count; ++i)
             {
                 this.adjacentCellNumberStructs[(int)skillUICellLinePrecondition[i]["CurrentVertex"]].AddLast(
-                    new SkillUICellVertexPreconditionStruct(
+                    new SkillUICellVertexAndWeightPreconditionStruct(
                         nextVertex : (int)skillUICellLinePrecondition[i]["NextVertex"]));
             }
         }
         // SkillNumber 간에 순서와 가중치를 기록한 데이터를 읽어와, 인접리스트를 만든다.
-        private void MakeAdjacentSkillNumberLinkedList()
+        private void MakeAdjacentSkillNumberAndWeightLinkedList()
         {
             // SkillNumber 정점 간의 순서와 가중치를 기록한 Local 데이터 읽어오기.
             TextAsset skillUICellMSPrecondition_TextAsset = Resources.Load<TextAsset>("GameSystem/SkillData/UI/SkillUICellMainSubPrecondition");
             JArray skillUICellMSPrecondition = JArray.Parse(skillUICellMSPrecondition_TextAsset.ToString());
 
-            // adjacentSkillNumberStructs LinkedList 정의.
+            // adjacentSkillNumberAndWeightStructs LinkedList 정의.
             for (int i = 0; i < this.skillUICellMainSubStructs.Count; ++i)
             {
-                LinkedList<SkillUICellVertexPreconditionStruct> perSkillUICellMS = new LinkedList<SkillUICellVertexPreconditionStruct>();
-                this.adjacentSkillNumberStructs.Add(perSkillUICellMS);
+                LinkedList<SkillUICellVertexAndWeightPreconditionStruct> perSkillUICellMS = new LinkedList<SkillUICellVertexAndWeightPreconditionStruct>();
+                this.adjacentSkillNumberAndWeightStructs.Add(perSkillUICellMS);
             }
 
-            // adjacentSkillNumberStructs 인접리스트 객체 생성.
+            // adjacentSkillNumberAndWeightStructs 인접리스트 객체 생성.
             for (int i = 0; i < skillUICellMSPrecondition.Count; ++i)
             {
-                this.adjacentSkillNumberStructs[(int)skillUICellMSPrecondition[i]["CurrentVertex"]].AddLast(
-                    new SkillUICellVertexPreconditionStruct(
-                        nextVertex: (int)skillUICellMSPrecondition[i]["NextVertex"]));
+                this.adjacentSkillNumberAndWeightStructs[(int)skillUICellMSPrecondition[i]["CurrentVertex"]].AddLast(
+                    new SkillUICellVertexAndWeightPreconditionStruct(
+                        nextVertex: (int)skillUICellMSPrecondition[i]["NextVertex"],
+                        preVertex_weight: (int)skillUICellMSPrecondition[i]["CurrentVertex_Weight"]));
             }
         }
         // SkillNumber 간에 순서와 가중치를 기록한 데이터를 읽어와, 특정 스킬에 필요한 skillNumber와 가중치 LinkedList를 만든다.
@@ -408,67 +409,43 @@ namespace GameSystem.InGameUI.Skill
             }
 
             // 현재 정점에서 갈 수 있는 정점들을 탐색.
-            foreach (var item in adjacentSkillNumberStructs[startSkillNumber])
+            foreach (var item in adjacentSkillNumberAndWeightStructs[startSkillNumber])
             {
                 // 다음 방문할 정점이 방문한적이 없으며 && 목표로 한 지점을 방문한 적이 없는지 확인.
                 if (visited[item.NextVertex] == 0 && !destinationIsVisited)
                 {
                     // 다음 정점 탐색.
                     SkillNumberDFS(item.NextVertex, ref destinationSkillNumber, ref destinationIsVisited, ref visited, ref order);
+
+                    // 현재 정점의 연장선에서 목표로한 지점을 방문한 적이 있으며,
+                    // 현재 SkillNumber의 스킬 레벨이, 이 다음 SkillNumber의 스킬 레벨 조건을 만족하지 못했다면 = True
+                    if (destinationIsVisited && (this.playerSkillInformationStructs[startSkillNumber].CurrentLevel < item.PreVertex_weight)) { order.Add(startSkillNumber); }
                 }
             }
-
-            // 현재 정점의 연장선에서 목표로한 지점을 방문한 적이 있다면, 현재 정점을 기록한다.
-            if (destinationIsVisited) { order.Add(startSkillNumber); }
         }
-
+        // 유저가 습득한 스킬들은 UI 강조 표시를 하지 않도록 기획하였다.
+        // SkillOrder에는 유저가 습득한 SkillNumber들은 기록되지 않는다.
+        // 따라서 SkillOrder와 skillUICellMainSubStructs값을 이용하여, UI 강조 시킬 필요가 없는 CellNumberOrder를 구할 수 있다.
         private void ExcludeCellNumberOrderToBeActivated()
         {
-            List<List<KeyValuePair<int, bool>>> satisfyCondition = new List<List<KeyValuePair<int, bool>>>();
-
-
-
-            for (int i = 0; i < skillNumberOrder.Count; ++i)
+            for(int i = 0; i < this.cellNumberOrder.Count; ++i)
             {
-                // LinkedList 정의.
-                List<KeyValuePair<int, bool>> perKeyValuePair = new List<KeyValuePair<int, bool>>();
-                satisfyCondition.Add(perKeyValuePair);
-
-                for (int j = 0; j < skillNumberOrder[i].Count-1; ++j)
+                for(int j =0; j < this.cellNumberOrder[i].Count; ++j)
                 {
-                    foreach(var item in adjacentSkillNumberStructs[skillNumberOrder[i][j]])  // // skillNumber를 통해 비교가 이루어진다.
+                    // SkillNumberOrder가 시작되는 지점이전의 CellNumber는 모두 삭제.
+                    if(this.cellNumberOrder[i][j] == this.skillUICellMainSubStructs[this.skillNumberOrder[i][0]].CellNumber)
                     {
-                        if (item.NextVertex == skillNumberOrder[i][j + 1])
-                        {
-                            if (playerSkillInformationStructs[skillNumberOrder[i][j]].CurrentLevel >= item.PreVertex_weight)
-                                satisfyCondition[i].Add(new KeyValuePair<int, bool>(skillUICellMainSubStructs[skillNumberOrder[i][j]].CellNumber, true));
-                            else satisfyCondition[i].Add(new KeyValuePair<int, bool>(skillUICellMainSubStructs[skillNumberOrder[i][j]].CellNumber, false));
-                        }
+                        this.cellNumberOrder[i].RemoveRange(0, j);
+                        break;
                     }
-                }
-
-                satisfyCondition[i].Add(new KeyValuePair<int, bool>(skillUICellMainSubStructs[skillNumberOrder[i][skillNumberOrder[i].Count-1]].CellNumber, false));
-            }
-
-
-            for (int i = 0; i < satisfyCondition.Count; ++i)
-            {
-                while (satisfyCondition[i][0].Value)
-                {
-                    while (true) // true야 반복, 두 값이 다르면 같으면 지속.
-                    {
-                        if (satisfyCondition[i][1].Key == cellNumberOrder[i][0]) { break; }
-
-                        cellNumberOrder[i].RemoveAt(0);
-                    }
-
-                    satisfyCondition[i].RemoveAt(0);
                 }
             }
         }
+        // CellContent가 Main, Sub, Interchange Cell만 방문하여, CellNumberOrder 값에 공백이 생긴다.
+        // CellNumberOrder은 해당 객체의 다음 CellNumber가 있는 옹
         private void ExtractCellNumberOrderToBeChanged()
         {
-            int rowCount = skillUICellStructs.Count / 11;
+            int rowCount = this.skillUICellStructs.Count / 11;
 
             for (int i = 0; i < cellNumberOrder.Count; ++i)
             {

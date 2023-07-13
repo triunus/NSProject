@@ -82,14 +82,14 @@ namespace GameSystem.InGameUI.Skill
             for (int i = 0; i < this.skillUICellMSPreconditionStructs.Count; ++i)
             {
                 // 선수 스킬 이름
-                this.skillConditions[i].GetChild(0).GetChild(0).GetComponent<TMPro.TextMeshProUGUI>().text = this.skillInformationStructs[linkedListPointer.Value.NextVertex].SkillName;
+                this.skillConditions[i].GetChild(0).GetChild(0).GetComponent<TMPro.TextMeshProUGUI>().text = this.skillInformationStructs[linkedListPointer.Value.PreVertex].SkillName;
 
                 // currentLevel / MaxLevel
                 this.skillConditions[i].GetChild(1).GetChild(0).GetComponent<TMPro.TextMeshProUGUI>().text
-                    = System.Convert.ToString(this.playerSkillInformationObserver.GetPlayerSkillInformation(linkedListPointer.Value.NextVertex).CurrentLevel) + " / " + System.Convert.ToString(this.skillInformationStructs[linkedListPointer.Value.NextVertex].MaxLevel);
+                    = System.Convert.ToString(this.playerSkillInformationObserver.GetPlayerSkillInformation(linkedListPointer.Value.PreVertex).CurrentLevel) + " / " + System.Convert.ToString(this.skillInformationStructs[linkedListPointer.Value.PreVertex].MaxLevel);
 
                 // 사용가능 여부 판단
-                if (this.playerSkillInformationObserver.GetPlayerSkillInformation(linkedListPointer.Value.NextVertex).CurrentLevel >= this.skillInformationStructs[linkedListPointer.Value.NextVertex].MaxLevel) this.isAvailable = "Available";
+                if (this.playerSkillInformationObserver.GetPlayerSkillInformation(linkedListPointer.Value.PreVertex).CurrentLevel >= this.skillInformationStructs[linkedListPointer.Value.PreVertex].MaxLevel) this.isAvailable = "Available";
 
                 linkedListPointer = linkedListPointer.Next;
             }

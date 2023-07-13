@@ -41,7 +41,7 @@ namespace GameSystem.InGameUI.Skill
         private List<PlayerSkillInformationStruct> playerSkillInformationStructs;
 
         // ISkillManagerForModel ±¸Çö
-        public ref List<SkillUICellStruct> SkillUICellStructs { get { return ref this.SkillUICellStructs; } }
+        public ref List<SkillUICellStruct> SkillUICellStructs { get { return ref this.skillUICellStructs; } }
         public ref List<SkillUICellMainSubStruct> SkillUICellMainSubStructs { get { return ref this.skillUICellMainSubStructs; } }
         public ref List<SkillInformationStruct> SkillInformationStruct { get { return ref this.skillInformationStructs; } }
         public ref List<PlayerSkillInformationStruct> PlayerSkillInformationStruct { get { return ref this.playerSkillInformationStructs; } }
