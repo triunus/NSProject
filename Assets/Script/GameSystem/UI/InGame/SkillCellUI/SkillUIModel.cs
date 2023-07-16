@@ -162,7 +162,7 @@ namespace GameSystem.InGameUI.Skill
             this.MakeAdjacentCellNumberLinkedList();       // CellNumber 간에 순서를 기록한 데이터를 읽어와, 인접리스트를 만든다.
             this.MakeAdjacentSkillNumberAndWeightLinkedList();         // SkillNumber 간에 순서와 가중치를 기록한 데이터를 읽어와, 인접리스트를 만든다.
 
-            this.MakeMainSubPreconditionLinkedList();   // SkillNumber 간에 순서와 가중치를 기록한 데이터를 읽어와, 특정 스킬에 필요한 skillNumber와 가중치 LinkedList를 만든다.
+            this.MakeSkillNumberPreconditionLinkedList();   // SkillNumber 간에 순서와 가중치를 기록한 데이터를 읽어와, 특정 스킬에 필요한 skillNumber와 가중치 LinkedList를 만든다.
         }
         public void DecideActivateOrInActivateCell(SkillUICellMainSubStruct SkillUICellMainSubStruct)
         {
@@ -305,7 +305,7 @@ namespace GameSystem.InGameUI.Skill
             }
         }
         // SkillNumber 간에 순서와 가중치를 기록한 데이터를 읽어와, 특정 스킬에 필요한 skillNumber와 가중치 LinkedList를 만든다.
-        private void MakeMainSubPreconditionLinkedList()
+        private void MakeSkillNumberPreconditionLinkedList()
         {
             // SkillNumber 정점 간의 순서와 가중치를 기록한 Local 데이터 읽어오기.
             TextAsset skillUICellMainSubPrecondition_TextAsset = Resources.Load<TextAsset>("GameSystem/SkillData/UI/SkillNumberPrecondition");
