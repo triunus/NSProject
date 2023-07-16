@@ -55,12 +55,15 @@ namespace GameSystem.InGameUI.Skill
             this.skillInformationStructs = new List<SkillInformationStruct>();
             this.playerSkillInformationStructs = new List<PlayerSkillInformationStruct>();
 
+            // Skill 로직 구현에 필요한 데이터를 Local에서 읽어와 필드 멤버에 저장하는 메소드들 수행.
             this.RecordSkillUICellInformation();
             this.RecodeSkillUICellMainSubInformation();
             this.RecordSkillInformation();
 
+            // 타 Manager를 참조하는 부분.
             this.playerManager = GameObject.FindWithTag("PlayerManager").GetComponent<Player.PlayerManager>();
 
+            // Skill MVC의 Model과 Controller 참조 및, Controller 초기 설정 메소드 호출.
             this.skillUIModel = GetComponent<SkillUIModel>();
             this.skillCellUIController = GetComponent<SkillUIController>();
             this.skillCellUIController.InitialSetting(ref skillUIModel);
@@ -90,9 +93,11 @@ namespace GameSystem.InGameUI.Skill
         // SkillManager 내부 로직.
         private void RecordSkillUICellInformation()
         {
+            // Resources 파일에서 데이터 파일 읽어오기.
             TextAsset skillUICell_TextAsset = Resources.Load<TextAsset>("GameSystem/SkillData/UI/SkillUICell");
             JArray skillUICell = JArray.Parse(skillUICell_TextAsset.ToString());
 
+            // 읽어온 Json 파일 값을 필드 멤버에 기록.
             for (int i = 0; i < skillUICell.Count; ++i)
             {
                 SkillUICellStruct SkillUICellStruct = new SkillUICellStruct(
@@ -100,7 +105,6 @@ namespace GameSystem.InGameUI.Skill
                     cellContent: (CellContent)System.Enum.Parse(typeof(CellContent), skillUICell[i]["CellContent"].ToString()),
                     lineNumber: (int)skillUICell[i]["LineNumber"]
                     );
-
                 this.skillUICellStructs.Add(SkillUICellStruct);
             }
         }
