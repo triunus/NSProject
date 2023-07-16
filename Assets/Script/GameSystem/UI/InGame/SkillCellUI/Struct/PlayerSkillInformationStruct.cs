@@ -1,10 +1,11 @@
 namespace GameSystem.InGameUI.Skill
 {
+    // PlayerSkillInformationStruct는 GAmeDataStruct에 포함되어 Local에 저장된다.
     [System.Serializable]
     public struct PlayerSkillInformationStruct
     {
-        private int skillNumber;
-        private int currentLevel;
+        private int skillNumber;        // 특정 SkillNumber
+        private int currentLevel;       // 의 Level
 
         public PlayerSkillInformationStruct(int skillNumber, int currentLevel)
         {

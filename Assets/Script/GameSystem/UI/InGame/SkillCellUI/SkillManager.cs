@@ -55,8 +55,8 @@ namespace GameSystem.InGameUI.Skill
             this.skillInformationStructs = new List<SkillInformationStruct>();
             this.playerSkillInformationStructs = new List<PlayerSkillInformationStruct>();
 
-            this.RecordSkillUICellLineInformation();
-            this.RecodeSkillUICellMSInformation();
+            this.RecordSkillUICellInformation();
+            this.RecodeSkillUICellMainSubInformation();
             this.RecordSkillInformation();
 
             this.playerManager = GameObject.FindWithTag("PlayerManager").GetComponent<Player.PlayerManager>();
@@ -88,7 +88,7 @@ namespace GameSystem.InGameUI.Skill
         }
 
         // SkillManager 내부 로직.
-        private void RecordSkillUICellLineInformation()
+        private void RecordSkillUICellInformation()
         {
             TextAsset skillUICell_TextAsset = Resources.Load<TextAsset>("GameSystem/SkillData/UI/SkillUICell");
             JArray skillUICell = JArray.Parse(skillUICell_TextAsset.ToString());
@@ -104,7 +104,7 @@ namespace GameSystem.InGameUI.Skill
                 this.skillUICellStructs.Add(SkillUICellStruct);
             }
         }
-        private void RecodeSkillUICellMSInformation()
+        private void RecodeSkillUICellMainSubInformation()
         {
             TextAsset skillUICellMainSub_TextAsset = Resources.Load<TextAsset>("GameSystem/SkillData/UI/SkillUICellMainSub");
             JArray skillUICellMainSub = JArray.Parse(skillUICellMainSub_TextAsset.ToString());
