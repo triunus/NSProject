@@ -28,8 +28,10 @@ namespace GameSystem.InGameUI.Skill
         // Skill Menu UI Prefab에 직접적으로 존재하는 버튼들에 SkillController 메소드 연결.
         private void ConnectButton()
         {
-            skillMenuUI.GetChild(0).GetChild(3).GetChild(0).GetChild(0).GetComponent<UnityEngine.UI.Button>().onClick.AddListener(delegate { this.skillUIController.ChangeSkillMenuType(SkillTreeType.Necromancy); });
-            skillMenuUI.GetChild(0).GetChild(3).GetChild(1).GetChild(0).GetComponent<UnityEngine.UI.Button>().onClick.AddListener(delegate { this.skillUIController.ChangeSkillMenuType(SkillTreeType.Class); });
+            skillMenuUI.GetChild(0).GetChild(3).GetChild(0).GetChild(0).GetComponent<UnityEngine.UI.Button>().onClick.AddListener(
+                delegate { this.skillUIController.ChangeSkillMenuType(SkillTreeType.Necromancy); });
+            skillMenuUI.GetChild(0).GetChild(3).GetChild(1).GetChild(0).GetComponent<UnityEngine.UI.Button>().onClick.AddListener(
+                delegate { this.skillUIController.ChangeSkillMenuType(SkillTreeType.Class); });
         }
 
         // ISkillMenuUIView의 초기설정 메소드.
