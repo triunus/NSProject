@@ -263,7 +263,7 @@ namespace GameSystem.InGameUI.Skill
         private void MakeAdjacentCellNumberLinkedList()
         {
             // CellNumber 정점 간의 순서를 기록한 Local 데이터 읽어오기.
-            TextAsset skillUICellLinePrecondition_TextAsset = Resources.Load<TextAsset>("GameSystem/SkillData/UI/SkillUICellPrecondition");
+            TextAsset skillUICellLinePrecondition_TextAsset = Resources.Load<TextAsset>("GameSystem/SkillData/UI/CellNumberPrecondition");
             JArray skillUICellLinePrecondition = JArray.Parse(skillUICellLinePrecondition_TextAsset.ToString());
 
             // adjacentCellNumberStructs LinkedList 정의.
@@ -285,7 +285,7 @@ namespace GameSystem.InGameUI.Skill
         private void MakeAdjacentSkillNumberAndWeightLinkedList()
         {
             // SkillNumber 정점 간의 순서와 가중치를 기록한 Local 데이터 읽어오기.
-            TextAsset skillUICellMSPrecondition_TextAsset = Resources.Load<TextAsset>("GameSystem/SkillData/UI/SkillUICellMainSubPrecondition");
+            TextAsset skillUICellMSPrecondition_TextAsset = Resources.Load<TextAsset>("GameSystem/SkillData/UI/SkillNumberPrecondition");
             JArray skillUICellMSPrecondition = JArray.Parse(skillUICellMSPrecondition_TextAsset.ToString());
 
             // adjacentSkillNumberAndWeightStructs LinkedList 정의.
@@ -308,7 +308,7 @@ namespace GameSystem.InGameUI.Skill
         private void MakeMainSubPreconditionLinkedList()
         {
             // SkillNumber 정점 간의 순서와 가중치를 기록한 Local 데이터 읽어오기.
-            TextAsset skillUICellMainSubPrecondition_TextAsset = Resources.Load<TextAsset>("GameSystem/SkillData/UI/SkillUICellMainSubPrecondition");
+            TextAsset skillUICellMainSubPrecondition_TextAsset = Resources.Load<TextAsset>("GameSystem/SkillData/UI/SkillNumberPrecondition");
             JArray skillUICellMainSubPrecondition = JArray.Parse(skillUICellMainSubPrecondition_TextAsset.ToString());
 
             // skillNumberPreconditionStructs LinkedList 정의.
