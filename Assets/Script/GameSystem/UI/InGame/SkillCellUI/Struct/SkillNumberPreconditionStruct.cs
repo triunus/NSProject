@@ -1,13 +1,14 @@
 namespace GameSystem.InGameUI.Skill
 {
     /// <summary>
-    ///     List<LinkedList<SkillNumberPreconditionStruct>> 형태로 사용된다.
-    ///     List의 i는 SkillNumber의 순서와 동일하다.
-    /// </summary>
+///     List<LinkedList<SkillNumberPreconditionStruct>> 형태로 사용된다.
+///     List의 i는 SkillNumber와 동일하게 사용한다.
+///     즉, i 번째 skillNumber와 관계된 skillNumber 필요한와 필요 가중치 등을 표현하는데 사용된다.
+/// </summary>
     public struct SkillNumberPreconditionStruct
     {
-        private int preVertex;              // List의 i번째 SkillNumber를 배우기 위해 학습이 필요한 이전 SkillNumber.
-        private int preVertex_weight;       // 이전 SkillNumber가 갖추어야되는 Level.
+        private int preVertex;
+        private int preVertex_weight;
 
         public SkillNumberPreconditionStruct(int preVertex, int preVertex_weight)
         {

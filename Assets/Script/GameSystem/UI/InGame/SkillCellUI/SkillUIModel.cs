@@ -54,12 +54,13 @@ namespace GameSystem.InGameUI.Skill
 
         private List<SkillUICellStruct> skillUICellStructs;                                     // SkillUICell의 기본 정보를 갖고 있다.
         private List<SkillUICellMainSubStruct> skillUICellMainSubStructs;                            // SkillNumber와 CellNumber를 갖고 있어, 각 SkillUICell GameObject들을 구분하는데 사용된다.
-        private List<SkillInformationStruct> skillInformationStructs;                               // Skill의 기본 데이터를 갖고 있다.
 
         private List<LinkedList<SkillUICellVertexAndWeightPreconditionStruct>> adjacentCellNumberStructs;    // SkillUICell.CellNumber 들 간의 순서를 표현하는 정보가 기록됨.
         private List<LinkedList<SkillUICellVertexAndWeightPreconditionStruct>> adjacentSkillNumberAndWeightStructs;   // skillInformationStructs.SkillNumber 들 간의 순서를 표현하는 정보가 기록됨.
 
         private List<LinkedList<SkillNumberPreconditionStruct>> skillNumberPreconditionStructs;     // List i 번째 스킬에 대한 관련 스킬 및 가중치를 기록하는 구조체이다.
+
+        private List<SkillInformationStruct> skillInformationStructs;                               // Skill의 기본 데이터를 갖고 있다.
 
         private List<int> cellNumberStartPosition;                                              // skillUICell 테이블 중, 최초로 시작되는 cell의 cellNumber
         private List<int> SkillNumberStartPosition;                                             // skillUICell 테이블 중, 최초로 시작되는 skill의 skillNumber
@@ -145,12 +146,12 @@ namespace GameSystem.InGameUI.Skill
             this.beClickedCellNumber = -1;
         }
 
-        // SkillModel 초기 설정.
+        // ISkillCellUIModel 구현
+        // Manager에서 필요한 데이터 가져오기 + SkillModel 초기 설정.
         public void InitialSetting(ISkillManagerForModel skillCellUIManager)
         {
             this.skillCellUIManager = skillCellUIManager;
 
-            // Manager 객체에서 필요한 데이터 가져오기.
             this.skillUICellStructs = this.skillCellUIManager.SkillUICellStructs;
             this.skillUICellMainSubStructs = this.skillCellUIManager.SkillUICellMainSubStructs;
             this.skillInformationStructs = this.skillCellUIManager.SkillInformationStruct;
@@ -171,21 +172,19 @@ namespace GameSystem.InGameUI.Skill
             {
                 this.beClickedCellNumber = SkillUICellMainSubStruct.CellNumber;
 
-                // 선 활성화 로직.
                 this.CellNumberTopologySort(this.beClickedCellNumber);
                 this.SkillNumberTopologySort(SkillUICellMainSubStruct);
                 this.ExcludeCellNumberOrderToBeActivated();
                 this.ExtractCellNumberOrderToBeChanged();
 
-                this.NotifyCellOrderToBeChangedObservers(ActivateOrNot.Activate);   // View들에게 공지.
+                this.NotifyCellOrderToBeChangedObservers(ActivateOrNot.Activate);   // 선 활성화
             }
             // 선택된 것과, 새롭게 선택한 것이 동일함. 선 비활성화.
             else if (this.beClickedCellNumber == SkillUICellMainSubStruct.CellNumber)
             {
                 this.beClickedCellNumber = -1;
 
-                // 선 비활성화 로직
-                this.NotifyCellOrderToBeChangedObservers(ActivateOrNot.Not);        // 활성화 되어 있는 View 비활성화 공지.
+                this.NotifyCellOrderToBeChangedObservers(ActivateOrNot.Not);  // 선 비활성화
 
                 this.cellNumberOrder.Clear();
                 this.skillNumberOrder.Clear();
@@ -196,20 +195,18 @@ namespace GameSystem.InGameUI.Skill
             {
                 this.beClickedCellNumber = SkillUICellMainSubStruct.CellNumber;
 
-                // 선 비활성화 로직
-                this.NotifyCellOrderToBeChangedObservers(ActivateOrNot.Not);  // 활성화 되어 있는 View 비활성화 공지.
+                this.NotifyCellOrderToBeChangedObservers(ActivateOrNot.Not);  // 선 비활성화
 
                 this.cellNumberOrder.Clear();
                 this.skillNumberOrder.Clear();
                 this.cellOrderToBeChanged.Clear();
 
-                // 선 활성화 로직
                 this.CellNumberTopologySort(this.beClickedCellNumber);
                 this.SkillNumberTopologySort(SkillUICellMainSubStruct);
                 this.ExcludeCellNumberOrderToBeActivated();
                 this.ExtractCellNumberOrderToBeChanged();
 
-                this.NotifyCellOrderToBeChangedObservers(ActivateOrNot.Activate);    // View들에게 공지.
+                this.NotifyCellOrderToBeChangedObservers(ActivateOrNot.Activate);    // 선 활성화
             }
         }
         public void LearnSkill(int skillNumber)

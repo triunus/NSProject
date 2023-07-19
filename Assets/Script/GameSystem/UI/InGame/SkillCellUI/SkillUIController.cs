@@ -55,7 +55,7 @@ namespace GameSystem.InGameUI.Skill
         private ISkillDescriptionUIView temporarySkillDescriptionUIView;
         private ISkillDescriptionUIView fixedSkillDescriptionUIView;
 
-        private SkillTreeType skillTreeType;
+        private SkillTreeType SkillTreeType;
 
         private bool skillMenuUIIsCreated;
         private bool fixedSkillDescriptionUIIsCreated;
@@ -69,7 +69,7 @@ namespace GameSystem.InGameUI.Skill
             this.temporarySkillDescriptionUIView = null;
             this.fixedSkillDescriptionUIView = null;
 
-            skillTreeType = SkillTreeType.Necromancy;
+            SkillTreeType = SkillTreeType.Necromancy;
 
             skillMenuUIIsCreated = false;
             fixedSkillDescriptionUIIsCreated = false;

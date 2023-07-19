@@ -1,13 +1,14 @@
 namespace GameSystem.InGameUI.Skill
 {
     /// <summary>
-    ///     List<LinkedList<SkillUICellVertexAndWeightPreconditionStruct>> 형태로 사용된다.
-    ///     List의 i는 SkillNumber의 순서와 동일하다.
+    /// List<LinkedList<SkillUICellVertexAndWeightPreconditionStruct>> 형태로 사용된다.
+    /// List의 i는 SkillNumber와 동일하게 사용한다.
+    /// 즉, i 번째 skillNumber 다음(or 이전)에 나오는 skillNumber들을 표현하는데 사용된다.
     /// </summary>
     public struct SkillUICellVertexAndWeightPreconditionStruct
     {
-        private int nextVertex;         // List의 i번째 SkillNumber 다음으로 갈 수 있는 SkillNumber.
-        private int preVertex_weight;   // 다음으로 갈 수 있는 SkillNumber로 가기 위해, List의 i 번째 SkillNumber가 갖추어야되는 Level.
+        private int nextVertex;
+        private int preVertex_weight;
 
         public SkillUICellVertexAndWeightPreconditionStruct(int nextVertex, int preVertex_weight = 0)
         {
