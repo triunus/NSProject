@@ -90,7 +90,7 @@ namespace GameSystem.InGameUI.Skill
         // SkillManager 내부 로직.
         private void RecordSkillUICellLineInformation()
         {
-            TextAsset skillUICell_TextAsset = Resources.Load<TextAsset>("GameSystem/SkillData/UI/SkillUICell");
+            TextAsset skillUICell_TextAsset = Resources.Load<TextAsset>("GameSystem/SkillData/UI/SkillUICellInformation");
             JArray skillUICell = JArray.Parse(skillUICell_TextAsset.ToString());
 
             for (int i = 0; i < skillUICell.Count; ++i)
@@ -106,7 +106,7 @@ namespace GameSystem.InGameUI.Skill
         }
         private void RecodeSkillUICellMSInformation()
         {
-            TextAsset skillUICellMainSub_TextAsset = Resources.Load<TextAsset>("GameSystem/SkillData/UI/SkillUICellMainSub");
+            TextAsset skillUICellMainSub_TextAsset = Resources.Load<TextAsset>("GameSystem/SkillData/UI/SkillAndCellNumber");
             JArray skillUICellMainSub = JArray.Parse(skillUICellMainSub_TextAsset.ToString());
 
             for (int i = 0; i < skillUICellMainSub.Count; ++i)   
