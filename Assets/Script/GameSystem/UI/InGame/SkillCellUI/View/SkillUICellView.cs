@@ -13,8 +13,9 @@ namespace GameSystem.InGameUI.Skill
     public interface ISkillUICellView
     {
         public void InitialNonCell(ref ISkillUIModel skillUIModel, ISkillUIController skillUIController);
-        public void InitizlLineCell(ref ISkillUIModel skillUIModel, ISkillUIController skillUIController, SkillUICellStruct skillUICellStruct);
-        public void InitializeMainAndSubCell(ref ISkillUIModel skillUIModel, ISkillUIController skillUIController, SkillUICellStruct skillUICellStruct, SkillUICellMainSubStruct SkillUICellMainSubStruct, SkillInformationStruct skillInformationStruct);
+        public void InitizlLineCell(ref ISkillUIModel skillUIModel, ISkillUIController skillUIController, SkillUICellStruct skillUICellStruct, int skillTreeColumnCount);
+        public void InitializeMainAndSubCell(ref ISkillUIModel skillUIModel, ISkillUIController skillUIController, SkillUICellStruct skillUICellStruct, int skillTreeColumnCount,
+            SkillUICellMainSubStruct SkillUICellMainSubStruct, SkillInformationStruct skillInformationStruct);
     }
 
     public class SkillUICellView : MonoBehaviour, ISkillUICellView, ICellOrderToBeChangedObserverForView, IPlayerSkillInformationObserverForView
@@ -27,12 +28,14 @@ namespace GameSystem.InGameUI.Skill
         private SkillUICellStruct SkillUICellStruct;                    // 고정
         private SkillUICellMainSubStruct SkillUICellMainSubStruct;                        // 고정
         private SkillInformationStruct skillInformationStruct;                  // 고정
+        private int skillTreeColumnCount;
 
         private PlayerSkillInformationStruct playerSkillInformationStruct;      // 동적
         private List<List<int>> cellOrderToBeChanged;                           // 동적
 
         private RectTransform myRectTransform;                                  // 현재 RectTransform
         private UnityEngine.UI.Image degreeOfSkillLevel; 
+        
 
         private void Awake()
         {
@@ -45,24 +48,26 @@ namespace GameSystem.InGameUI.Skill
         public void InitialNonCell(ref ISkillUIModel skillUIModel, ISkillUIController skillUIController) {
             this.skillUIController = skillUIController;
         }
-        public void InitizlLineCell(ref ISkillUIModel skillUIModel, ISkillUIController skillUIController, SkillUICellStruct SkillUICellStruct)
+        public void InitizlLineCell(ref ISkillUIModel skillUIModel, ISkillUIController skillUIController, SkillUICellStruct SkillUICellStruct, int skillTreeColumnCount)
         {
             this.skillUIController = skillUIController;
 
             this.SkillUICellStruct = SkillUICellStruct;
+            this.skillTreeColumnCount = skillTreeColumnCount;
 
             this.RegisterCellOrderToBeChangedObserver(ref skillUIModel);    // CellOrderToBeChanged 데이터에 대한 Obserever 등록(구독).
 
             this.InitializeCellLine();                                      // SkillUICellStruct.LineNumber를 이용한, 그래프 간선 그리기.
         }
-        public void InitializeMainAndSubCell(ref ISkillUIModel skillUIModel, ISkillUIController skillUIController,
-            SkillUICellStruct skillUICellStruct, SkillUICellMainSubStruct skillUICellMainSubStruct, SkillInformationStruct skillInformationStruct)
+        public void InitializeMainAndSubCell(ref ISkillUIModel skillUIModel, ISkillUIController skillUIController, SkillUICellStruct skillUICellStruct, int skillTreeColumnCount, 
+            SkillUICellMainSubStruct skillUICellMainSubStruct, SkillInformationStruct skillInformationStruct)
         {
             this.skillUIController = skillUIController;
 
             this.SkillUICellStruct = skillUICellStruct;
             this.SkillUICellMainSubStruct = skillUICellMainSubStruct;
             this.skillInformationStruct = skillInformationStruct;
+            this.skillTreeColumnCount = skillTreeColumnCount;
 
             this.RegisterCellOrderToBeChangedObserver(ref skillUIModel);    // CellOrderToBeChanged 데이터에 대한 Obserever 등록(구독).
             this.RegisterPlayerSkillInformationObserver(ref skillUIModel);  // PlayerSkillInformation 데이터에 대한 Obserever 등록(구독).
@@ -149,7 +154,7 @@ namespace GameSystem.InGameUI.Skill
                         {
                             lineWantToActivate |= 1;
                         }
-                        else if(j > 0 && (SkillUICellStruct.CellNumber - cellOrderToBeChanged[i][j - 1] == 10))
+                        else if(j > 0 && (SkillUICellStruct.CellNumber - cellOrderToBeChanged[i][j - 1] == this.skillTreeColumnCount))
                         {
                             lineWantToActivate |= 8;
                         }
@@ -158,7 +163,7 @@ namespace GameSystem.InGameUI.Skill
                         {
                             lineWantToActivate |= 4;
                         }
-                        else if(j < cellOrderToBeChanged[i].Count - 1 && (cellOrderToBeChanged[i][j + 1] - SkillUICellStruct.CellNumber == 10))
+                        else if(j < cellOrderToBeChanged[i].Count - 1 && (cellOrderToBeChanged[i][j + 1] - SkillUICellStruct.CellNumber == this.skillTreeColumnCount))
                         {
                             lineWantToActivate |= 2;
                         }
