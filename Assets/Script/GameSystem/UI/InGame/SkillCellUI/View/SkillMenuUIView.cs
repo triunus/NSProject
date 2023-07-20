@@ -4,7 +4,7 @@ namespace GameSystem.InGameUI.Skill
 {
     public interface ISkillMenuUIView
     {
-        public void InitialSetting(ISkillUIController skillUIController);
+        public void InitialSetting(ISkillUIController skillUIController, int skillTreeColumnCount);
 
         public void ActivateOrUnActivateSkillMenuUI(bool isSkillMenuUIActivated);
         public void ActivateSkillMenu(SkillTreeType skillTreeType);
@@ -33,15 +33,15 @@ namespace GameSystem.InGameUI.Skill
         }
 
         // ISkillMenuUIView의 초기설정 메소드.
-        public void InitialSetting(ISkillUIController skillUIController)
+        public void InitialSetting(ISkillUIController skillUIController, int skillTreeColumnCount)
         {
             this.skillUIController = skillUIController;
 
-            this.CreateNecromancySkillUICell();
-            //            this.CreateClassSkillCellUI();
+
+            this.CreateSkillTree(skillTreeColumnCount);
         }
         // Necromancy Skill Tree 하위 SkillCellUI 생성 메소드
-        private void CreateNecromancySkillUICell()
+        private void CreateSkillTree(int skillTreeColumnCount)
         {
             RectTransform necromancySkillContentMenuUI_V = this.skillMenuUI.GetChild(2).GetChild(0).GetChild(2).GetChild(0).GetChild(0).GetComponent<RectTransform>();
             RectTransform VContentSV = necromancySkillContentMenuUI_V.GetChild(0).GetComponent<RectTransform>();
@@ -51,10 +51,11 @@ namespace GameSystem.InGameUI.Skill
             RectTransform necromancySkillContentMenuUI_H = this.skillMenuUI.GetChild(2).GetChild(0).GetChild(2).GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetComponent<RectTransform>();
 
             // skillUIController 객체에 '매개변수로 전달된 RectTransform 객체' 하위에 SkillCellUI Prefab 생성 요청.
-            this.skillUIController.CreateSkillUICell(necromancySkillContentMenuUI_H, SkillTreeType.Necromancy);
+            this.skillUIController.CreateSkillUICell(necromancySkillContentMenuUI_H);
 
             // Skill Tree에 생성되는 SkillUICell Prefab의 개수에 따라 Skill Menu UI 객체 크기 조정.
             UnityEngine.UI.GridLayoutGroup gridLayoutGroup = necromancySkillContentMenuUI_H.GetComponent<UnityEngine.UI.GridLayoutGroup>();
+            gridLayoutGroup.constraintCount = skillTreeColumnCount;
 
             float widht = gridLayoutGroup.cellSize.x * gridLayoutGroup.constraintCount;
             float height = gridLayoutGroup.cellSize.y * necromancySkillContentMenuUI_H.childCount / gridLayoutGroup.constraintCount;
@@ -66,11 +67,6 @@ namespace GameSystem.InGameUI.Skill
             VContentNSName.sizeDelta = new Vector2(VContentNSName.sizeDelta.x, height);
 
             necromancySkillContentMenuUI_V.sizeDelta = new Vector2(necromancySkillContentMenuUI_V.sizeDelta.x, height);
-        }
-        private void CreateClassSkillUICell()
-        {
-            //            this.classSkillMenuContentUI = this.skillMenuUI.GetChild(2).GetChild(1).GetChild(2).GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetComponent<RectTransform>();
-            //            this.skillUIController.CreateSkillUICell(classSkillMenuContentUI, SkillTreeType.Class);
         }
 
         // 사용자와 SkillMenuUI Prefab과의 상호작용.

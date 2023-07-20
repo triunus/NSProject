@@ -26,7 +26,7 @@ namespace GameSystem.InGameUI.Skill
     // SkillMenuUIView 용
     public interface ISkillUIController_For_SkillMenuUIView
     {
-        public void CreateSkillUICell(RectTransform skillContentRectTransform, SkillTreeType SkillTreeType);
+        public void CreateSkillUICell(RectTransform skillContentRectTransform);
         public void ChangeSkillMenuType(SkillTreeType SkillTreeType);   // SkillTreeType 변경
     }
 
@@ -127,7 +127,7 @@ namespace GameSystem.InGameUI.Skill
             this.skillMenuUIView = Instantiate(Resources.Load<RectTransform>("Prefab/UI/SkillUI/SkillMenuUI"),
                 GameObject.FindWithTag("UIManager").GetComponent<RectTransform>()).GetComponent<SkillMenuUIView>();
             // skillMenuUIView 초기설정 메소드 호출.
-            this.skillMenuUIView.InitialSetting(this);
+            this.skillMenuUIView.InitialSetting(this, this.skillUIModel.SkillTreeStruct.ColumnCount);
         }
         public void CreateSkillUICell(RectTransform skillContentRectTransform)
         {
