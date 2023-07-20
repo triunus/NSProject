@@ -14,7 +14,7 @@ namespace GameSystem.InGameUI.Skill
 
     public interface ISkillManagerForModel
     {
-        public ref SkillTreeStruct skillTreeStruct { get; }
+        public ref SkillTreeStruct SkillTreeStruct { get; }
         public ref List<SkillUICellMainSubStruct> SkillUICellMainSubStructs { get; }
         public ref List<SkillInformationStruct> SkillInformationStruct { get; }
         public ref List<PlayerSkillInformationStruct> PlayerSkillInformationStruct { get; }
