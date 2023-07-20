@@ -35,7 +35,7 @@ namespace GameSystem.InGameUI.Skill
         public void DecideActivateOrInActivateCell(SkillUICellMainSubStruct SkillUICellMainSubStruct);     // 활성화 or 비활성화
         public void LearnSkill(int skillNumber);
 
-        public ref List<SkillUICellStruct> SkillUICellStructs { get; }
+        public ref SkillTreeStruct SkillTreeStruct { get; }
         public ref List<SkillUICellMainSubStruct> SkillUICellMainSubStructs { get; }
         public ref List<SkillInformationStruct> SkillInformationStructs { get; }
         public LinkedList<SkillNumberPreconditionStruct> GetMainSubPreconditionStruct(int skillNumber);
@@ -52,7 +52,7 @@ namespace GameSystem.InGameUI.Skill
         private List<IPlayerSkillInformationObserverForView> playerSkillInformationObservers;   // 사용자가 현재 학습한 스킬의 Level 정보를 필요로하는 View 목록.
         private List<PlayerSkillInformationStruct> playerSkillInformationStructs;               // 사용자가 현재 학습한 스킬의 Level 정보.
 
-        private List<SkillUICellStruct> skillUICellStructs;                                     // SkillUICell의 기본 정보를 갖고 있다.
+        private SkillTreeStruct skillTreeStruct;                                     // SkillUICell의 기본 정보를 갖고 있다.
         private List<SkillUICellMainSubStruct> skillUICellMainSubStructs;                            // SkillNumber와 CellNumber를 갖고 있어, 각 SkillUICell GameObject들을 구분하는데 사용된다.
 
         private List<LinkedList<SkillUICellVertexAndWeightPreconditionStruct>> adjacentCellNumberStructs;    // SkillUICell.CellNumber 들 간의 순서를 표현하는 정보가 기록됨.
@@ -130,7 +130,7 @@ namespace GameSystem.InGameUI.Skill
             this.cellOrderToBeChanged = new List<List<int>>();
             this.playerSkillInformationObservers = new List<IPlayerSkillInformationObserverForView>();
 
-            this.skillUICellStructs = new List<SkillUICellStruct>();
+            this.skillTreeStruct = new SkillTreeStruct();
             this.skillUICellMainSubStructs = new List<SkillUICellMainSubStruct>();
 
             this.adjacentCellNumberStructs = new List<LinkedList<SkillUICellVertexAndWeightPreconditionStruct>>();
@@ -152,7 +152,7 @@ namespace GameSystem.InGameUI.Skill
         {
             this.skillCellUIManager = skillCellUIManager;
 
-            this.skillUICellStructs = this.skillCellUIManager.SkillUICellStructs;
+            this.skillTreeStruct = this.skillCellUIManager.SkillTreeStruct;
             this.skillUICellMainSubStructs = this.skillCellUIManager.SkillUICellMainSubStructs;
             this.skillInformationStructs = this.skillCellUIManager.SkillInformationStruct;
             this.playerSkillInformationStructs = this.skillCellUIManager.PlayerSkillInformationStruct;
@@ -231,7 +231,7 @@ namespace GameSystem.InGameUI.Skill
             }
 
         }
-        public ref List<SkillUICellStruct> SkillUICellStructs { get { return ref this.skillUICellStructs; } }
+        public ref SkillTreeStruct SkillTreeStruct { get { return ref this.skillTreeStruct; } }
         public ref List<SkillUICellMainSubStruct> SkillUICellMainSubStructs { get { return ref this.skillUICellMainSubStructs; } }
         public ref List<SkillInformationStruct> SkillInformationStructs { get { return ref this.skillInformationStructs; } }
 
@@ -241,10 +241,10 @@ namespace GameSystem.InGameUI.Skill
         // CellNumber를 정점으로 사용하는 그래프의 시작 정점 찾기.
         private void FindCellNumberStartPosition()
         {
-            for(int i=0; i < skillUICellStructs.Count; ++i)
+            for(int i=0; i < this.skillTreeStruct.SkillUICellInforamtion.Count; ++i)
             {
-                if (skillUICellStructs[i].CellContent == CellContent.main && (skillUICellStructs[i].LineNumber == 4 || skillUICellStructs[i].LineNumber == 0))
-                    this.cellNumberStartPosition.Add(skillUICellStructs[i].CellNumber);
+                if (this.skillTreeStruct.SkillUICellInforamtion[i].CellContent == CellContent.main && (this.skillTreeStruct.SkillUICellInforamtion[i].LineNumber == 4 || this.skillTreeStruct.SkillUICellInforamtion[i].LineNumber == 0))
+                    this.cellNumberStartPosition.Add(this.skillTreeStruct.SkillUICellInforamtion[i].CellNumber);
             }
         }
         // SkillNumber를 정점으로 사용하는 그래프의 시작 정점 찾기.
@@ -264,7 +264,7 @@ namespace GameSystem.InGameUI.Skill
             JArray skillUICellLinePrecondition = JArray.Parse(skillUICellLinePrecondition_TextAsset.ToString());
 
             // adjacentCellNumberStructs LinkedList 정의.
-            for (int i = 0; i < skillUICellStructs.Count; ++i)
+            for (int i = 0; i < this.skillTreeStruct.SkillUICellInforamtion.Count; ++i)
             {
                 LinkedList<SkillUICellVertexAndWeightPreconditionStruct> perSkillUICellLine = new LinkedList<SkillUICellVertexAndWeightPreconditionStruct>();
                 this.adjacentCellNumberStructs.Add(perSkillUICellLine);
@@ -334,7 +334,7 @@ namespace GameSystem.InGameUI.Skill
             for (int i = 0; i < this.cellNumberStartPosition.Count; ++i)
             {
                 List<int> order = new List<int>();
-                visited = Enumerable.Repeat(0, skillUICellStructs.Count).ToList();      // 모든 정점에 대한 방문여부.
+                visited = Enumerable.Repeat(0, this.skillTreeStruct.SkillUICellInforamtion.Count).ToList();      // 모든 정점에 대한 방문여부.
                 destinationIsVisited = false;                                           // 목표 정점 방문여부 값.
 
                 // 시작 cellNumber, 방문지점, 목적지 방문여부, 방문기록, 방문 순서.
@@ -448,15 +448,13 @@ namespace GameSystem.InGameUI.Skill
         // 따라서, 빠진 Cell들의 CellNumber를 CellNumberOrder에 넣어주는 과정을 거친다.
         private void ExtractCellNumberOrderToBeChanged()
         {
-            int rowCount = this.skillUICellStructs.Count / 11;
-
             for (int i = 0; i < cellNumberOrder.Count; ++i)
             {
                 List<int> temp = new List<int>();
 
                 for(int j = 1; j < cellNumberOrder[i].Count; ++j)
                 {
-                    if(cellNumberOrder[i][j-1]/ rowCount == cellNumberOrder[i][j]/ rowCount)
+                    if(cellNumberOrder[i][j-1]/ this.skillTreeStruct.ColumnCount == cellNumberOrder[i][j]/ this.skillTreeStruct.ColumnCount)
                     {
                         for(int k = 0; k < cellNumberOrder[i][j] - cellNumberOrder[i][j - 1]; ++k)
                         {
@@ -465,9 +463,9 @@ namespace GameSystem.InGameUI.Skill
                     }
                     else
                     {
-                        for(int l = 0; l < (cellNumberOrder[i][j]/ rowCount) - (cellNumberOrder[i][j - 1]/ rowCount); ++l)
+                        for(int l = 0; l < (cellNumberOrder[i][j]/ this.skillTreeStruct.ColumnCount) - (cellNumberOrder[i][j - 1]/ this.skillTreeStruct.ColumnCount); ++l)
                         {
-                            temp.Add(cellNumberOrder[i][j - 1] + rowCount * l);
+                            temp.Add(cellNumberOrder[i][j - 1] + this.skillTreeStruct.ColumnCount * l);
                         }
                     }
                 }
