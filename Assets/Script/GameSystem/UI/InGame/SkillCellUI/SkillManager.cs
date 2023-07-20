@@ -56,7 +56,7 @@ namespace GameSystem.InGameUI.Skill
             this.skillInformationStructs = new List<SkillInformationStruct>();
             this.playerSkillInformationStructs = new List<PlayerSkillInformationStruct>();
 
-            this.RecordSkillUICellLineInformation();
+            this.RecordSkillUICellInformation();
             this.RecodeSkillUICellMSInformation();
             this.RecordSkillInformation();
 
@@ -89,7 +89,7 @@ namespace GameSystem.InGameUI.Skill
         }
 
         // SkillManager 내부 로직.
-        private void RecordSkillUICellLineInformation()
+        private void RecordSkillUICellInformation()
         {
             TextAsset skillTree_TextAsset = Resources.Load<TextAsset>("GameSystem/SkillData/UI/SkillUICellInformation");
             JObject skillTree = JObject.Parse(skillTree_TextAsset.ToString());
