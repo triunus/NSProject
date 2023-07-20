@@ -3,38 +3,23 @@ namespace GameSystem.SaveAndLoad
     [System.Serializable]
     public struct SkillDataStruct
     {
-        private System.Collections.Generic.List<InGameUI.Skill.PlayerSkillInformationStruct> skillData;
+        private System.Collections.Generic.List<InGameUI.Skill.PlayerSkillInformationStruct> playerSkillData;
 
         public SkillDataStruct(int defalut = 0)
         {
-            this.skillData = new System.Collections.Generic.List<InGameUI.Skill.PlayerSkillInformationStruct>();
+            this.playerSkillData = new System.Collections.Generic.List<InGameUI.Skill.PlayerSkillInformationStruct>();
         }
 
-        public System.Collections.Generic.List<InGameUI.Skill.PlayerSkillInformationStruct> SkillData
+        public System.Collections.Generic.List<InGameUI.Skill.PlayerSkillInformationStruct> PlayerSkillData
         {
-            get
-            {
-                return skillData.ConvertAll(tmp => new InGameUI.Skill.PlayerSkillInformationStruct(tmp.SkillNumber, tmp.CurrentLevel));
-            }
-            set
-            {
-                this.skillData = value.ConvertAll(tmp => new InGameUI.Skill.PlayerSkillInformationStruct(tmp.SkillNumber, tmp.CurrentLevel));
-            }
+            get { return this.playerSkillData; }
+            set { this.playerSkillData = value; }
         }
 
         public int GetSkillDataCount()
         {
-            if (this.skillData is null) return 0;
-            return this.skillData.Count;
+            if (this.playerSkillData.Count == 0) return 0;
+            else return this.playerSkillData.Count;
         }
-
-        /*        public System.Collections.Generic.List<InGameUI.Skill.PlayerSkillInformationStruct> GetSkillData()
-                {
-                    return skillData.ConvertAll(tmp => new InGameUI.Skill.PlayerSkillInformationStruct(tmp.SkillNumber, tmp.CurrentLevel));
-                }*/
-        /*        public void SetSkillData(System.Collections.Generic.List<InGameUI.Skill.PlayerSkillInformationStruct> playerSkillInformationStruct)
-                {
-                    this.skillData = playerSkillInformationStruct;
-                }*/
     }
 }
