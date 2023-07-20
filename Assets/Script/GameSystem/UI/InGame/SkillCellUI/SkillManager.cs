@@ -75,8 +75,8 @@ namespace GameSystem.InGameUI.Skill
         public void AllocateData(SaveAndLoad.SkillDataStruct skillDataStruct)
         {
             // 게임을 최초로 실행하여, playerSkillInformation 정보가 없을 때.
-            if(skillDataStruct.GetSkillDataCount() == 0) this.playerSkillInformationStructs = skillInformationStructs.ConvertAll(tmp => new PlayerSkillInformationStruct(tmp.SkillNumber, 0));
-            else this.playerSkillInformationStructs = skillDataStruct.PlayerSkillData;
+            if (skillDataStruct.GetSkillDataCount() == 0) this.playerSkillInformationStructs = skillInformationStructs.ConvertAll(tmp => new PlayerSkillInformationStruct(tmp.SkillNumber, 0));
+            else this.playerSkillInformationStructs = skillDataStruct.PlayerSkillData.ConvertAll(tmp => new Skill.PlayerSkillInformationStruct(tmp.SkillNumber, tmp.CurrentLevel));
 
             this.skillUIModel.InitialSetting(this);
         }
