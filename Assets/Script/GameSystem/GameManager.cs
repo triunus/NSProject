@@ -109,7 +109,7 @@ namespace GameSystem
         }
         private void Start()
         {
-            this.CreateNewGameData_Temp();
+            this.CreateNewGameData();
             this.UpdateSummaryGameDataFromLocalData();
             this.NotifySummaryGameDataStructObserver();
         }
@@ -462,19 +462,15 @@ namespace GameSystem
 
 
         // 최초 NewGameData 생성 함수. (임시)
-        private void CreateNewGameData_Temp()
+        private void CreateNewGameData()
         {
             SaveAndLoad.GameDataStruct gameDataStruct = new SaveAndLoad.GameDataStruct(SceneName.Forest, 0);
 
-            SaveAndLoad.PlayerDataStruct playerDataStruct = new SaveAndLoad.PlayerDataStruct();
-            SaveAndLoad.EnemyDataStruct enemyDataStruct = new SaveAndLoad.EnemyDataStruct(false);
-            SaveAndLoad.SummonDataStruct summonDataStruct = new SaveAndLoad.SummonDataStruct();
-            SaveAndLoad.CorpseDataStruct corpseDataStruct = new SaveAndLoad.CorpseDataStruct();
-
-            gameDataStruct.PlayerDataStruct = playerDataStruct;
-            gameDataStruct.EnemyDataStruct = enemyDataStruct;
-            gameDataStruct.SummonDataStruct = summonDataStruct;
-            gameDataStruct.CorpseDataStruct = corpseDataStruct;
+            gameDataStruct.PlayerDataStruct = new SaveAndLoad.PlayerDataStruct();
+            gameDataStruct.EnemyDataStruct = new SaveAndLoad.EnemyDataStruct(false);
+            gameDataStruct.SummonDataStruct = new SaveAndLoad.SummonDataStruct();
+            gameDataStruct.CorpseDataStruct = new SaveAndLoad.CorpseDataStruct();
+            gameDataStruct.SkillDataStruct = new SaveAndLoad.SkillDataStruct(0);
 
             this.gameSaveLoadManager.SaveGameData(SaveLoadType.NewGame, gameDataStruct);
         }
