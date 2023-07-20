@@ -241,10 +241,10 @@ namespace GameSystem.InGameUI.Skill
         // CellNumber를 정점으로 사용하는 그래프의 시작 정점 찾기.
         private void FindCellNumberStartPosition()
         {
-            for(int i=0; i < this.skillTreeStruct.SkillUICellInforamtion.Count; ++i)
+            for(int i=0; i < this.skillTreeStruct.SkillUICellInformation.Count; ++i)
             {
-                if (this.skillTreeStruct.SkillUICellInforamtion[i].CellContent == CellContent.main && (this.skillTreeStruct.SkillUICellInforamtion[i].LineNumber == 4 || this.skillTreeStruct.SkillUICellInforamtion[i].LineNumber == 0))
-                    this.cellNumberStartPosition.Add(this.skillTreeStruct.SkillUICellInforamtion[i].CellNumber);
+                if (this.skillTreeStruct.SkillUICellInformation[i].CellContent == CellContent.main && (this.skillTreeStruct.SkillUICellInformation[i].LineNumber == 4 || this.skillTreeStruct.SkillUICellInformation[i].LineNumber == 0))
+                    this.cellNumberStartPosition.Add(this.skillTreeStruct.SkillUICellInformation[i].CellNumber);
             }
         }
         // SkillNumber를 정점으로 사용하는 그래프의 시작 정점 찾기.
@@ -264,7 +264,7 @@ namespace GameSystem.InGameUI.Skill
             JArray skillUICellLinePrecondition = JArray.Parse(skillUICellLinePrecondition_TextAsset.ToString());
 
             // adjacentCellNumberStructs LinkedList 정의.
-            for (int i = 0; i < this.skillTreeStruct.SkillUICellInforamtion.Count; ++i)
+            for (int i = 0; i < this.skillTreeStruct.SkillUICellInformation.Count; ++i)
             {
                 LinkedList<SkillUICellVertexAndWeightPreconditionStruct> perSkillUICellLine = new LinkedList<SkillUICellVertexAndWeightPreconditionStruct>();
                 this.adjacentCellNumberStructs.Add(perSkillUICellLine);
@@ -334,7 +334,7 @@ namespace GameSystem.InGameUI.Skill
             for (int i = 0; i < this.cellNumberStartPosition.Count; ++i)
             {
                 List<int> order = new List<int>();
-                visited = Enumerable.Repeat(0, this.skillTreeStruct.SkillUICellInforamtion.Count).ToList();      // 모든 정점에 대한 방문여부.
+                visited = Enumerable.Repeat(0, this.skillTreeStruct.SkillUICellInformation.Count).ToList();      // 모든 정점에 대한 방문여부.
                 destinationIsVisited = false;                                           // 목표 정점 방문여부 값.
 
                 // 시작 cellNumber, 방문지점, 목적지 방문여부, 방문기록, 방문 순서.
