@@ -51,7 +51,7 @@ namespace GameSystem.InGameUI.Skill
 
         private void Awake()
         {
-            this.skillTreeStruct = new SkillTreeStruct();
+            this.skillTreeStruct = new SkillTreeStruct(0, 0);
             this.skillUICellMainSubStructs = new List<SkillUICellMainSubStruct>();
             this.skillInformationStructs = new List<SkillInformationStruct>();
             this.playerSkillInformationStructs = new List<PlayerSkillInformationStruct>();
@@ -76,14 +76,14 @@ namespace GameSystem.InGameUI.Skill
         {
             // 게임을 최초로 실행하여, playerSkillInformation 정보가 없을 때.
             if(skillDataStruct.GetSkillDataCount() == 0) this.playerSkillInformationStructs = skillInformationStructs.ConvertAll(tmp => new PlayerSkillInformationStruct(tmp.SkillNumber, 0));
-            else this.playerSkillInformationStructs = skillDataStruct.SkillData;
+            else this.playerSkillInformationStructs = skillDataStruct.PlayerSkillData;
 
             this.skillUIModel.InitialSetting(this);
         }
         public SaveAndLoad.SkillDataStruct GatherData()
         {
             SaveAndLoad.SkillDataStruct skillDataStruct = new SaveAndLoad.SkillDataStruct();
-            skillDataStruct.SkillData = this.playerSkillInformationStructs;
+            skillDataStruct.PlayerSkillData = this.playerSkillInformationStructs;
 
             return skillDataStruct;
         }
@@ -93,10 +93,10 @@ namespace GameSystem.InGameUI.Skill
         {
             TextAsset skillTree_TextAsset = Resources.Load<TextAsset>("GameSystem/SkillData/UI/SkillUICellInformation");
             JObject skillTree = JObject.Parse(skillTree_TextAsset.ToString());
-            JArray skillUICellInformation = (JArray)skillTree["SkillUICellInformation"];
 
-            this.skillTreeStruct.RowCount = (int)skillUICellInformation["RowCount"];
-            this.skillTreeStruct.ColumnCount = (int)skillUICellInformation["ColumnCount"];
+            this.skillTreeStruct.RowCount = (int)skillTree["RowCount"];
+            this.skillTreeStruct.ColumnCount = (int)skillTree["ColumnCount"];
+            JArray skillUICellInformation = (JArray)skillTree["CellInformation"];
 
             for (int i = 0; i < skillUICellInformation.Count; ++i)
             {
@@ -106,7 +106,7 @@ namespace GameSystem.InGameUI.Skill
                     lineNumber: (int)skillUICellInformation[i]["LineNumber"]
                     );
 
-                this.skillTreeStruct.SkillUICellInforamtion.Add(SkillUICellStruct);
+                this.skillTreeStruct.SkillUICellInformation.Add(SkillUICellStruct);
             }
         }
         private void RecodeSkillUICellMSInformation()
