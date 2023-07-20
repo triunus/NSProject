@@ -129,12 +129,9 @@ namespace GameSystem.InGameUI.Skill
             // skillMenuUIView 초기설정 메소드 호출.
             this.skillMenuUIView.InitialSetting(this);
         }
-        public void CreateSkillUICell(RectTransform skillContentRectTransform, SkillTreeType SkillTreeType)
+        public void CreateSkillUICell(RectTransform skillContentRectTransform)
         {
-            System.Collections.Generic.List<SkillUICellStruct> tempSkillUICellStructs = null;
-
-            if (SkillTreeType == SkillTreeType.Necromancy) tempSkillUICellStructs = this.skillUIModel.SkillUICellStructs;
-//            else tempSkillUICellStructs = this.skillUIModel.ClassSkillUICellLineStructs;      // 차후 생성 예정.
+            SkillTreeStruct tempSkillTreeStruct = this.skillUIModel.SkillTreeStruct;
 
             System.Collections.Generic.List<SkillUICellMainSubStruct> tempSkillUICellMainSubStructs = this.skillUIModel.SkillUICellMainSubStructs;
             System.Collections.Generic.List<SkillInformationStruct> tempSkillInformationStructs = this.skillUIModel.SkillInformationStructs;
@@ -142,25 +139,25 @@ namespace GameSystem.InGameUI.Skill
             int tempSkillNumber;
 
             // skillUICellStructs 개수만큼 SkillUICell Prefab 생성.
-            for (int i = 0; i < tempSkillUICellStructs.Count; ++i)
+            for (int i = 0; i < tempSkillTreeStruct.SkillUICellInforamtion.Count; ++i)
             {
                 ISkillUICellView SkillUICellView = Instantiate(Resources.Load<RectTransform>("Prefab/UI/SkillUI/SkillUICell"), skillContentRectTransform).GetComponent<ISkillUICellView>();
 
-                tempSkillNumber = tempSkillUICellMainSubStructs.FindIndex(x => x.CellNumber == tempSkillUICellStructs[i].CellNumber);
+                tempSkillNumber = tempSkillUICellMainSubStructs.FindIndex(x => x.CellNumber == tempSkillTreeStruct.SkillUICellInforamtion[i].CellNumber);
 
                 // skillUICellStructs.CellContent의 값을 이용하여, SkillUICell Prefab의 역할을 구분. 초기설정 메소드 구분하여 호출.
-                switch (tempSkillUICellStructs[i].CellContent)
+                switch (tempSkillTreeStruct.SkillUICellInforamtion[i].CellContent)
                 {
                     case CellContent.non:
                         SkillUICellView.InitialNonCell(ref this.skillUIModel, this);
                         break;
                     case CellContent.line:
                     case CellContent.interchange:
-                        SkillUICellView.InitizlLineCell(ref this.skillUIModel, this, tempSkillUICellStructs[i]);
+                        SkillUICellView.InitizlLineCell(ref this.skillUIModel, this, tempSkillTreeStruct.SkillUICellInforamtion[i]);
                         break;
                     case CellContent.sub:
                     case CellContent.main:
-                        SkillUICellView.InitializeMainAndSubCell(ref this.skillUIModel, this, tempSkillUICellStructs[i], tempSkillUICellMainSubStructs[tempSkillNumber], tempSkillInformationStructs[tempSkillNumber]);
+                        SkillUICellView.InitializeMainAndSubCell(ref this.skillUIModel, this, tempSkillTreeStruct.SkillUICellInforamtion[i], tempSkillUICellMainSubStructs[tempSkillNumber], tempSkillInformationStructs[tempSkillNumber]);
                         break;
                 }
 
