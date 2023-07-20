@@ -23,7 +23,6 @@ namespace GameSystem.SaveAndLoad
             this.enemyDataStruct = null;
             this.summonDataStruct = null;
             this.corpseDataStruct = null;
-            this.skillDataStruct = new SkillDataStruct();
         }
 
         public SceneName SceneName { get { return this.sceneName; } set { this.sceneName = value; } }
