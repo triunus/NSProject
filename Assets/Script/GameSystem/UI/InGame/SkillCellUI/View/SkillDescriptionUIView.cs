@@ -4,7 +4,7 @@ namespace GameSystem.InGameUI.Skill
 {
     public interface ISkillDescriptionUIView
     {
-        public void InitialSetting(ref ISkillUIModel skillUIModel, ISkillUIController skillUIController, SkillDescriptionType skillDescriptionType, SkillUICellMainSubStruct SkillUICellMainSubStruct,
+        public void InitialSetting(ref ISkillUIModel skillUIModel, ISkillUIController skillUIController, SkillDescriptionType skillDescriptionType, SkillAndCellNumberStruct SkillAndCellNumberStruct,
             ref System.Collections.Generic.List<SkillInformationStruct> skillInformationStructs, System.Collections.Generic.LinkedList<SkillNumberPreconditionStruct> linkedList);
 
         public int SkillNumber { get; }
@@ -21,7 +21,7 @@ namespace GameSystem.InGameUI.Skill
 
         private System.Collections.Generic.List<RectTransform> skillConditions;
 
-        private SkillUICellMainSubStruct SkillUICellMainSubStruct;
+        private SkillAndCellNumberStruct SkillAndCellNumberStruct;
         private System.Collections.Generic.List<SkillInformationStruct> skillInformationStructs;
         private PlayerSkillInformationStruct playerSkillInformation;
         private System.Collections.Generic.LinkedList<SkillNumberPreconditionStruct> skillUICellMSPreconditionStructs;
@@ -29,7 +29,7 @@ namespace GameSystem.InGameUI.Skill
         private SkillDescriptionType skillDescriptionType;
         private string isAvailable;
 
-        public int SkillNumber { get { return this.SkillUICellMainSubStruct.SkillNumber; } }
+        public int SkillNumber { get { return this.SkillAndCellNumberStruct.SkillNumber; } }
 
         private void Awake()
         {
@@ -42,7 +42,7 @@ namespace GameSystem.InGameUI.Skill
             isAvailable = "Not Available";
         }
 
-        public void InitialSetting(ref ISkillUIModel skillUIModel, ISkillUIController skillUIController, SkillDescriptionType skillDescriptionType, SkillUICellMainSubStruct SkillUICellMainSubStruct,
+        public void InitialSetting(ref ISkillUIModel skillUIModel, ISkillUIController skillUIController, SkillDescriptionType skillDescriptionType, SkillAndCellNumberStruct SkillAndCellNumberStruct,
             ref System.Collections.Generic.List<SkillInformationStruct> skillInformationStructs, System.Collections.Generic.LinkedList<SkillNumberPreconditionStruct> linkedList)
         {
             this.playerSkillInformationObserver = skillUIModel;
@@ -51,10 +51,10 @@ namespace GameSystem.InGameUI.Skill
             skillUIModel.RegisterPlayerSkillInformationObserver(this);
 
             this.skillDescriptionType = skillDescriptionType;
-            this.SkillUICellMainSubStruct = SkillUICellMainSubStruct;
+            this.SkillAndCellNumberStruct = SkillAndCellNumberStruct;
             this.skillInformationStructs = skillInformationStructs;
             this.skillUICellMSPreconditionStructs = linkedList;
-            this.playerSkillInformation = this.playerSkillInformationObserver.GetPlayerSkillInformation(SkillUICellMainSubStruct.SkillNumber);
+            this.playerSkillInformation = this.playerSkillInformationObserver.GetPlayerSkillInformation(SkillAndCellNumberStruct.SkillNumber);
 
             this.CreateSkillConditionPanel();
 
@@ -62,12 +62,12 @@ namespace GameSystem.InGameUI.Skill
         }
         private void ConnectButton()
         {
-            this.myRectTransform.GetChild(0).GetChild(3).GetChild(2).GetChild(0).GetComponent<UnityEngine.UI.Button>().onClick.AddListener(delegate { this.skillUIController.LearnSkill(this.SkillUICellMainSubStruct.SkillNumber); });
+            this.myRectTransform.GetChild(0).GetChild(3).GetChild(2).GetChild(0).GetComponent<UnityEngine.UI.Button>().onClick.AddListener(delegate { this.skillUIController.LearnSkill(this.SkillAndCellNumberStruct.SkillNumber); });
         }
 
         public void UpdatePlayerSkillInformationObserver()
         {
-            this.playerSkillInformation = this.playerSkillInformationObserver.GetPlayerSkillInformation(this.SkillUICellMainSubStruct.SkillNumber);
+            this.playerSkillInformation = this.playerSkillInformationObserver.GetPlayerSkillInformation(this.SkillAndCellNumberStruct.SkillNumber);
 
             this.Display();
         }
@@ -75,7 +75,7 @@ namespace GameSystem.InGameUI.Skill
         private void Display()
         {
             // 스킬 이름
-            this.myRectTransform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetComponent<TMPro.TextMeshProUGUI>().text = this.skillInformationStructs[this.SkillUICellMainSubStruct.SkillNumber].SkillName;
+            this.myRectTransform.GetChild(0).GetChild(0).GetChild(0).GetChild(0).GetComponent<TMPro.TextMeshProUGUI>().text = this.skillInformationStructs[this.SkillAndCellNumberStruct.SkillNumber].SkillName;
 
             var linkedListPointer = this.skillUICellMSPreconditionStructs.First;
 
@@ -97,10 +97,10 @@ namespace GameSystem.InGameUI.Skill
             // 사용가능 여부
             this.myRectTransform.GetChild(0).GetChild(0).GetChild(1).GetChild(0).GetComponent<TMPro.TextMeshProUGUI>().text = this.isAvailable;
             // 스킬 설명
-            this.myRectTransform.GetChild(0).GetChild(2).GetChild(0).GetChild(0).GetComponent<TMPro.TextMeshProUGUI>().text = this.skillInformationStructs[this.SkillUICellMainSubStruct.SkillNumber].SkillDescription;
+            this.myRectTransform.GetChild(0).GetChild(2).GetChild(0).GetChild(0).GetComponent<TMPro.TextMeshProUGUI>().text = this.skillInformationStructs[this.SkillAndCellNumberStruct.SkillNumber].SkillDescription;
             // 소비 마나
             this.myRectTransform.GetChild(0).GetChild(3).GetChild(1).GetChild(0).GetChild(3).GetChild(0).GetComponent<TMPro.TextMeshProUGUI>().text
-                = System.Convert.ToString(this.skillInformationStructs[this.SkillUICellMainSubStruct.SkillNumber].Cost + this.skillInformationStructs[this.SkillUICellMainSubStruct.SkillNumber].Cost * this.playerSkillInformation.CurrentLevel);
+                = System.Convert.ToString(this.skillInformationStructs[this.SkillAndCellNumberStruct.SkillNumber].Cost + this.skillInformationStructs[this.SkillAndCellNumberStruct.SkillNumber].Cost * this.playerSkillInformation.CurrentLevel);
         }
         private void CreateSkillConditionPanel()
         {

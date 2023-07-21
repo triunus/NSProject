@@ -32,11 +32,11 @@ namespace GameSystem.InGameUI.Skill
     public interface ISkillUIModel : ICellOrderToBeChangedObserver, IPlayerSkillInformationObserver
     {
         public void InitialSetting(ISkillManagerForModel skillCellUIManagerForModel);
-        public void DecideActivateOrInActivateCell(SkillUICellMainSubStruct SkillUICellMainSubStruct);     // 활성화 or 비활성화
+        public void DecideActivateOrInActivateCell(SkillAndCellNumberStruct SkillAndCellNumberStruct);     // 활성화 or 비활성화
         public void LearnSkill(int skillNumber);
 
         public ref SkillTreeStruct SkillTreeStruct { get; }
-        public ref List<SkillUICellMainSubStruct> SkillUICellMainSubStructs { get; }
+        public ref List<SkillAndCellNumberStruct> SkillAndCellNumberStructs { get; }
         public ref List<SkillInformationStruct> SkillInformationStructs { get; }
         public LinkedList<SkillNumberPreconditionStruct> GetMainSubPreconditionStruct(int skillNumber);
     }
@@ -53,7 +53,7 @@ namespace GameSystem.InGameUI.Skill
         private List<PlayerSkillInformationStruct> playerSkillInformationStructs;               // 사용자가 현재 학습한 스킬의 Level 정보.
 
         private SkillTreeStruct skillTreeStruct;                                     // SkillUICell의 기본 정보를 갖고 있다.
-        private List<SkillUICellMainSubStruct> skillUICellMainSubStructs;                            // SkillNumber와 CellNumber를 갖고 있어, 각 SkillUICell GameObject들을 구분하는데 사용된다.
+        private List<SkillAndCellNumberStruct> skillAndCellNumberStructs;                            // SkillNumber와 CellNumber를 갖고 있어, 각 SkillUICell GameObject들을 구분하는데 사용된다.
 
         private List<LinkedList<SkillUICellVertexAndWeightPreconditionStruct>> adjacentCellNumberStructs;    // SkillUICell.CellNumber 들 간의 순서를 표현하는 정보가 기록됨.
         private List<LinkedList<SkillUICellVertexAndWeightPreconditionStruct>> adjacentSkillNumberAndWeightStructs;   // skillInformationStructs.SkillNumber 들 간의 순서를 표현하는 정보가 기록됨.
@@ -131,7 +131,7 @@ namespace GameSystem.InGameUI.Skill
             this.playerSkillInformationObservers = new List<IPlayerSkillInformationObserverForView>();
 
             this.skillTreeStruct = new SkillTreeStruct();
-            this.skillUICellMainSubStructs = new List<SkillUICellMainSubStruct>();
+            this.skillAndCellNumberStructs = new List<SkillAndCellNumberStruct>();
 
             this.adjacentCellNumberStructs = new List<LinkedList<SkillUICellVertexAndWeightPreconditionStruct>>();
             this.adjacentSkillNumberAndWeightStructs = new List<LinkedList<SkillUICellVertexAndWeightPreconditionStruct>>();
@@ -153,7 +153,7 @@ namespace GameSystem.InGameUI.Skill
             this.skillCellUIManager = skillCellUIManager;
 
             this.skillTreeStruct = this.skillCellUIManager.SkillTreeStruct;
-            this.skillUICellMainSubStructs = this.skillCellUIManager.SkillUICellMainSubStructs;
+            this.skillAndCellNumberStructs = this.skillCellUIManager.SkillAndCellNumberStructs;
             this.skillInformationStructs = this.skillCellUIManager.SkillInformationStruct;
             this.playerSkillInformationStructs = this.skillCellUIManager.PlayerSkillInformationStruct;
 
@@ -165,22 +165,22 @@ namespace GameSystem.InGameUI.Skill
 
             this.MakeSkillNumberPreconditionLinkedList();   // SkillNumber 간에 순서와 가중치를 기록한 데이터를 읽어와, 특정 스킬에 필요한 skillNumber와 가중치 LinkedList를 만든다.
         }
-        public void DecideActivateOrInActivateCell(SkillUICellMainSubStruct SkillUICellMainSubStruct)
+        public void DecideActivateOrInActivateCell(SkillAndCellNumberStruct SkillAndCellNumberStruct)
         {
             // 선택된 것이 없었음. 선 활성화.
             if (this.beClickedCellNumber == -1)
             {
-                this.beClickedCellNumber = SkillUICellMainSubStruct.CellNumber;
+                this.beClickedCellNumber = SkillAndCellNumberStruct.CellNumber;
 
                 this.CellNumberTopologySort(this.beClickedCellNumber);
-                this.SkillNumberTopologySort(SkillUICellMainSubStruct);
+                this.SkillNumberTopologySort(SkillAndCellNumberStruct);
                 this.ExcludeCellNumberOrderToBeActivated();
                 this.ExtractCellNumberOrderToBeChanged();
 
                 this.NotifyCellOrderToBeChangedObservers(ActivateOrNot.Activate);   // 선 활성화
             }
             // 선택된 것과, 새롭게 선택한 것이 동일함. 선 비활성화.
-            else if (this.beClickedCellNumber == SkillUICellMainSubStruct.CellNumber)
+            else if (this.beClickedCellNumber == SkillAndCellNumberStruct.CellNumber)
             {
                 this.beClickedCellNumber = -1;
 
@@ -193,7 +193,7 @@ namespace GameSystem.InGameUI.Skill
             // 선택된 것과, 새롭게 선택된 것이 다름. 선 비활성화 후 선 활성화.
             else
             {
-                this.beClickedCellNumber = SkillUICellMainSubStruct.CellNumber;
+                this.beClickedCellNumber = SkillAndCellNumberStruct.CellNumber;
 
                 this.NotifyCellOrderToBeChangedObservers(ActivateOrNot.Not);  // 선 비활성화
 
@@ -202,7 +202,7 @@ namespace GameSystem.InGameUI.Skill
                 this.cellOrderToBeChanged.Clear();
 
                 this.CellNumberTopologySort(this.beClickedCellNumber);
-                this.SkillNumberTopologySort(SkillUICellMainSubStruct);
+                this.SkillNumberTopologySort(SkillAndCellNumberStruct);
                 this.ExcludeCellNumberOrderToBeActivated();
                 this.ExtractCellNumberOrderToBeChanged();
 
@@ -232,7 +232,7 @@ namespace GameSystem.InGameUI.Skill
 
         }
         public ref SkillTreeStruct SkillTreeStruct { get { return ref this.skillTreeStruct; } }
-        public ref List<SkillUICellMainSubStruct> SkillUICellMainSubStructs { get { return ref this.skillUICellMainSubStructs; } }
+        public ref List<SkillAndCellNumberStruct> SkillAndCellNumberStructs { get { return ref this.skillAndCellNumberStructs; } }
         public ref List<SkillInformationStruct> SkillInformationStructs { get { return ref this.skillInformationStructs; } }
 
         public LinkedList<SkillNumberPreconditionStruct> GetMainSubPreconditionStruct(int skillNumber) { return this.skillNumberPreconditionStructs[skillNumber]; }
@@ -252,7 +252,7 @@ namespace GameSystem.InGameUI.Skill
         {
             for (int i = 0; i < cellNumberStartPosition.Count; ++i)
             {
-                this.SkillNumberStartPosition.Add(this.skillUICellMainSubStructs[skillUICellMainSubStructs.FindIndex(x => x.CellNumber == cellNumberStartPosition[i])].SkillNumber);
+                this.SkillNumberStartPosition.Add(this.skillAndCellNumberStructs[skillAndCellNumberStructs.FindIndex(x => x.CellNumber == cellNumberStartPosition[i])].SkillNumber);
             }
         }
 
@@ -286,7 +286,7 @@ namespace GameSystem.InGameUI.Skill
             JArray skillUICellMSPrecondition = JArray.Parse(skillUICellMSPrecondition_TextAsset.ToString());
 
             // adjacentSkillNumberAndWeightStructs LinkedList 정의.
-            for (int i = 0; i < this.skillUICellMainSubStructs.Count; ++i)
+            for (int i = 0; i < this.skillAndCellNumberStructs.Count; ++i)
             {
                 LinkedList<SkillUICellVertexAndWeightPreconditionStruct> perSkillUICellMS = new LinkedList<SkillUICellVertexAndWeightPreconditionStruct>();
                 this.adjacentSkillNumberAndWeightStructs.Add(perSkillUICellMS);
@@ -309,7 +309,7 @@ namespace GameSystem.InGameUI.Skill
             JArray skillUICellMainSubPrecondition = JArray.Parse(skillUICellMainSubPrecondition_TextAsset.ToString());
 
             // skillNumberPreconditionStructs LinkedList 정의.
-            for (int i = 0; i < this.skillUICellMainSubStructs.Count; ++i)
+            for (int i = 0; i < this.skillAndCellNumberStructs.Count; ++i)
             {
                 LinkedList<SkillNumberPreconditionStruct> perSkillUICellMS = new LinkedList<SkillNumberPreconditionStruct>();
                 this.skillNumberPreconditionStructs.Add(perSkillUICellMS);
@@ -374,16 +374,16 @@ namespace GameSystem.InGameUI.Skill
             if (destinationIsVisited) { order.Add(startCellNumber); }
         }
         // SkillNumber 위상정렬 시작.
-        private void SkillNumberTopologySort(SkillUICellMainSubStruct SkillUICellMainSubStruct)
+        private void SkillNumberTopologySort(SkillAndCellNumberStruct SkillAndCellNumberStruct)
         {
             List<int> visited = new List<int>();
             bool destinationIsVisited;
-            int destinationSkillNumber = SkillUICellMainSubStruct.SkillNumber;
+            int destinationSkillNumber = SkillAndCellNumberStruct.SkillNumber;
 
             for (int i = 0; i < this.SkillNumberStartPosition.Count; ++i)
             {
                 List<int> order = new List<int>();
-                visited = Enumerable.Repeat(0, skillUICellMainSubStructs.Count).ToList();    // 모든 정점에 대한 방문여부.
+                visited = Enumerable.Repeat(0, skillAndCellNumberStructs.Count).ToList();    // 모든 정점에 대한 방문여부.
                 destinationIsVisited = false;                                           // 목표 정점 방문여부 값.
 
                 // 시작 cellNumber, 방문지점, 목적지 방문여부, 방문기록, 방문 순서.
@@ -427,7 +427,7 @@ namespace GameSystem.InGameUI.Skill
         }
         // 유저가 습득한 스킬들은 UI 강조 표시를 하지 않도록 기획하였다.
         // SkillOrder에는 유저가 습득한 SkillNumber들은 기록되지 않는다.
-        // 따라서 SkillOrder와 skillUICellMainSubStructs값을 이용하여, UI 강조 시킬 필요가 없는 CellNumberOrder를 구할 수 있다.
+        // 따라서 SkillOrder와 skillAndCellNumberStructs값을 이용하여, UI 강조 시킬 필요가 없는 CellNumberOrder를 구할 수 있다.
         private void ExcludeCellNumberOrderToBeActivated()
         {
             for(int i = 0; i < this.cellNumberOrder.Count; ++i)
@@ -435,7 +435,7 @@ namespace GameSystem.InGameUI.Skill
                 for(int j =0; j < this.cellNumberOrder[i].Count; ++j)
                 {
                     // SkillNumberOrder가 시작되는 지점이전의 CellNumber는 모두 삭제.
-                    if(this.cellNumberOrder[i][j] == this.skillUICellMainSubStructs[this.skillNumberOrder[i][0]].CellNumber)
+                    if(this.cellNumberOrder[i][j] == this.skillAndCellNumberStructs[this.skillNumberOrder[i][0]].CellNumber)
                     {
                         this.cellNumberOrder[i].RemoveRange(0, j);
                         break;

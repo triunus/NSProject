@@ -18,9 +18,9 @@ namespace GameSystem.InGameUI.Skill
     public interface ISkillUIController_For_InteractionSkillImageUIAndMouseInSkillMenuUI
     {
         // view 용
-        public void MouseClickInteraction(SkillUICellMainSubStruct SkillUICellMainSubStruct);        // skill 아이콘 클릭 이벤트
-        public void MouseEnterInteraction(SkillUICellMainSubStruct SkillUICellMainSubStruct);
-        public void MouseExitInteration(SkillUICellMainSubStruct SkillUICellMainSubStruct);
+        public void MouseClickInteraction(SkillAndCellNumberStruct SkillAndCellNumberStruct);        // skill 아이콘 클릭 이벤트
+        public void MouseEnterInteraction(SkillAndCellNumberStruct SkillAndCellNumberStruct);
+        public void MouseExitInteration(SkillAndCellNumberStruct SkillAndCellNumberStruct);
     }
 
     // SkillMenuUIView 용
@@ -133,7 +133,7 @@ namespace GameSystem.InGameUI.Skill
         {
             SkillTreeStruct tempSkillTreeStruct = this.skillUIModel.SkillTreeStruct;
 
-            System.Collections.Generic.List<SkillUICellMainSubStruct> tempSkillUICellMainSubStructs = this.skillUIModel.SkillUICellMainSubStructs;
+            System.Collections.Generic.List<SkillAndCellNumberStruct> tempSkillUICellMainSubStructs = this.skillUIModel.SkillAndCellNumberStructs;
             System.Collections.Generic.List<SkillInformationStruct> tempSkillInformationStructs = this.skillUIModel.SkillInformationStructs;
 
             int tempSkillNumber;
@@ -165,49 +165,49 @@ namespace GameSystem.InGameUI.Skill
                 this.necromancySkillCellUIViews.Add(SkillUICellView);
             }
         }
-        private void CreateSkillDescriptionUI(SkillDescriptionType skillDescriptionType, SkillUICellMainSubStruct SkillUICellMainSubStruct)
+        private void CreateSkillDescriptionUI(SkillDescriptionType skillDescriptionType, SkillAndCellNumberStruct SkillAndCellNumberStruct)
         {
             if (skillDescriptionType == SkillDescriptionType.Temporary)
             {
                 this.temporarySkillDescriptionUIView = Instantiate(Resources.Load<RectTransform>("Prefab/UI/SkillUI/TemporarySkillDescriptionUI"), GameObject.FindWithTag("UIManager").GetComponent<RectTransform>()).GetComponent<SkillDescriptionUIView>(); ;
-                this.temporarySkillDescriptionUIView.InitialSetting(ref this.skillUIModel, this, skillDescriptionType, SkillUICellMainSubStruct,
-                ref this.skillUIModel.SkillInformationStructs, this.skillUIModel.GetMainSubPreconditionStruct(SkillUICellMainSubStruct.SkillNumber));
+                this.temporarySkillDescriptionUIView.InitialSetting(ref this.skillUIModel, this, skillDescriptionType, SkillAndCellNumberStruct,
+                ref this.skillUIModel.SkillInformationStructs, this.skillUIModel.GetMainSubPreconditionStruct(SkillAndCellNumberStruct.SkillNumber));
             }
             else
             {
                 this.fixedSkillDescriptionUIView = Instantiate(Resources.Load<RectTransform>("Prefab/UI/SkillUI/FixedSkillDescriptionUI"), GameObject.FindWithTag("UIManager").GetComponent<RectTransform>()).GetComponent<SkillDescriptionUIView>(); ;
-                this.fixedSkillDescriptionUIView.InitialSetting(ref this.skillUIModel, this, skillDescriptionType, SkillUICellMainSubStruct,
-                ref this.skillUIModel.SkillInformationStructs, this.skillUIModel.GetMainSubPreconditionStruct(SkillUICellMainSubStruct.SkillNumber));
+                this.fixedSkillDescriptionUIView.InitialSetting(ref this.skillUIModel, this, skillDescriptionType, SkillAndCellNumberStruct,
+                ref this.skillUIModel.SkillInformationStructs, this.skillUIModel.GetMainSubPreconditionStruct(SkillAndCellNumberStruct.SkillNumber));
             }
         }
 
 
         // InteractionSkillImageUIAndMouseInSkillMenuUI 구현
-        public void MouseClickInteraction(SkillUICellMainSubStruct SkillUICellMainSubStruct)
+        public void MouseClickInteraction(SkillAndCellNumberStruct SkillAndCellNumberStruct)
         {
-            this.skillUIModel.DecideActivateOrInActivateCell(SkillUICellMainSubStruct);
+            this.skillUIModel.DecideActivateOrInActivateCell(SkillAndCellNumberStruct);
 
             if (!this.fixedSkillDescriptionUIIsCreated)
             {
                 this.fixedSkillDescriptionUIIsCreated = true;
-                this.CreateSkillDescriptionUI(SkillDescriptionType.Fixed, SkillUICellMainSubStruct);
+                this.CreateSkillDescriptionUI(SkillDescriptionType.Fixed, SkillAndCellNumberStruct);
             }
-            else if (this.fixedSkillDescriptionUIIsCreated && this.fixedSkillDescriptionUIView.SkillNumber == SkillUICellMainSubStruct.SkillNumber)
+            else if (this.fixedSkillDescriptionUIIsCreated && this.fixedSkillDescriptionUIView.SkillNumber == SkillAndCellNumberStruct.SkillNumber)
             {
                 this.fixedSkillDescriptionUIIsCreated = false;
                 this.fixedSkillDescriptionUIView.Destroy();
             }
-            else if (this.fixedSkillDescriptionUIIsCreated && this.fixedSkillDescriptionUIView.SkillNumber != SkillUICellMainSubStruct.SkillNumber)
+            else if (this.fixedSkillDescriptionUIIsCreated && this.fixedSkillDescriptionUIView.SkillNumber != SkillAndCellNumberStruct.SkillNumber)
             {
                 this.fixedSkillDescriptionUIView.Destroy();
-                this.CreateSkillDescriptionUI(SkillDescriptionType.Fixed, SkillUICellMainSubStruct);
+                this.CreateSkillDescriptionUI(SkillDescriptionType.Fixed, SkillAndCellNumberStruct);
             }
         }
-        public void MouseEnterInteraction(SkillUICellMainSubStruct SkillUICellMainSubStruct)
+        public void MouseEnterInteraction(SkillAndCellNumberStruct SkillAndCellNumberStruct)
         {
-            this.CreateSkillDescriptionUI(SkillDescriptionType.Temporary, SkillUICellMainSubStruct);
+            this.CreateSkillDescriptionUI(SkillDescriptionType.Temporary, SkillAndCellNumberStruct);
         }
-        public void MouseExitInteration(SkillUICellMainSubStruct SkillUICellMainSubStruct)
+        public void MouseExitInteration(SkillAndCellNumberStruct SkillAndCellNumberStruct)
         {
             this.temporarySkillDescriptionUIView.Destroy();
             this.temporarySkillDescriptionUIView = null;

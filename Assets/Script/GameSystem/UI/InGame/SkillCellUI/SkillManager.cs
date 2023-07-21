@@ -15,7 +15,7 @@ namespace GameSystem.InGameUI.Skill
     public interface ISkillManagerForModel
     {
         public ref SkillTreeStruct SkillTreeStruct { get; }
-        public ref List<SkillUICellMainSubStruct> SkillUICellMainSubStructs { get; }
+        public ref List<SkillAndCellNumberStruct> SkillAndCellNumberStructs { get; }
         public ref List<SkillInformationStruct> SkillInformationStruct { get; }
         public ref List<PlayerSkillInformationStruct> PlayerSkillInformationStruct { get; }
 
@@ -36,14 +36,14 @@ namespace GameSystem.InGameUI.Skill
 
         private SkillTreeStruct skillTreeStruct;
 
-        private List<SkillUICellMainSubStruct> skillUICellMainSubStructs;
+        private List<SkillAndCellNumberStruct> skillAndCellNumberStructs;
 
         private List<SkillInformationStruct> skillInformationStructs;
         private List<PlayerSkillInformationStruct> playerSkillInformationStructs;
 
         // ISkillManagerForModel ±¸Çö
         public ref SkillTreeStruct SkillTreeStruct { get { return ref this.skillTreeStruct; } }
-        public ref List<SkillUICellMainSubStruct> SkillUICellMainSubStructs { get { return ref this.skillUICellMainSubStructs; } }
+        public ref List<SkillAndCellNumberStruct> SkillAndCellNumberStructs { get { return ref this.skillAndCellNumberStructs; } }
         public ref List<SkillInformationStruct> SkillInformationStruct { get { return ref this.skillInformationStructs; } }
         public ref List<PlayerSkillInformationStruct> PlayerSkillInformationStruct { get { return ref this.playerSkillInformationStructs; } }
 
@@ -52,12 +52,12 @@ namespace GameSystem.InGameUI.Skill
         private void Awake()
         {
             this.skillTreeStruct = new SkillTreeStruct(0, 0);
-            this.skillUICellMainSubStructs = new List<SkillUICellMainSubStruct>();
+            this.skillAndCellNumberStructs = new List<SkillAndCellNumberStruct>();
             this.skillInformationStructs = new List<SkillInformationStruct>();
             this.playerSkillInformationStructs = new List<PlayerSkillInformationStruct>();
 
             this.RecordSkillUICellInformation();
-            this.RecodeSkillUICellMSInformation();
+            this.RecodeSkillAndCellNumberInformation();
             this.RecordSkillInformation();
 
             this.playerManager = GameObject.FindWithTag("PlayerManager").GetComponent<Player.PlayerManager>();
@@ -109,19 +109,19 @@ namespace GameSystem.InGameUI.Skill
                 this.skillTreeStruct.SkillUICellInformation.Add(SkillUICellStruct);
             }
         }
-        private void RecodeSkillUICellMSInformation()
+        private void RecodeSkillAndCellNumberInformation()
         {
-            TextAsset skillUICellMainSub_TextAsset = Resources.Load<TextAsset>("GameSystem/SkillData/UI/SkillAndCellNumber");
-            JArray skillUICellMainSub = JArray.Parse(skillUICellMainSub_TextAsset.ToString());
+            TextAsset skillAndCellNumber_TextAsset = Resources.Load<TextAsset>("GameSystem/SkillData/UI/SkillAndCellNumber");
+            JArray skillAndCellNumbe = JArray.Parse(skillAndCellNumber_TextAsset.ToString());
 
-            for (int i = 0; i < skillUICellMainSub.Count; ++i)   
+            for (int i = 0; i < skillAndCellNumbe.Count; ++i)   
             {
-                SkillUICellMainSubStruct SkillUICellStruct = new SkillUICellMainSubStruct(
-                    skillNumber: (int)skillUICellMainSub[i]["SkillNumber"],
-                    cellNumber: (int)skillUICellMainSub[i]["CellNumber"]
+                SkillAndCellNumberStruct skillAndCellNumberStruct = new SkillAndCellNumberStruct(
+                    skillNumber: (int)skillAndCellNumbe[i]["SkillNumber"],
+                    cellNumber: (int)skillAndCellNumbe[i]["CellNumber"]
                     );
 
-                this.skillUICellMainSubStructs.Add(SkillUICellStruct);
+                this.skillAndCellNumberStructs.Add(skillAndCellNumberStruct);
             }
         }
         private void RecordSkillInformation()
