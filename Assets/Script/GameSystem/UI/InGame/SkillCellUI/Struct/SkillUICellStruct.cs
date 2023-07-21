@@ -1,29 +1,12 @@
 namespace GameSystem.InGameUI.Skill
 {
-    public enum CellContent{
+    public enum CellContent
+    {
         main,
         sub,
         interchange,
         line,
         non
-    }
-
-    public struct SkillTreeStruct
-    {
-        private int rowCount;
-        private int columnCount;
-        private System.Collections.Generic.List<SkillUICellStruct> skillUICellInformation;
-
-        public SkillTreeStruct(int rowCount = 0, int columnCount = 0)
-        {
-            this.rowCount = rowCount;
-            this.columnCount = columnCount;
-            this.skillUICellInformation = new System.Collections.Generic.List<SkillUICellStruct>();
-        }
-
-        public int RowCount { get { return this.rowCount; } set { this.rowCount = value; } }
-        public int ColumnCount { get { return this.columnCount; } set { this.columnCount = value; } }
-        public System.Collections.Generic.List<SkillUICellStruct> SkillUICellInformation { get { return this.skillUICellInformation; } }
     }
 
     // SkillUICell.cellNumber은 좌->우, 상->하로 나열된 Cell의 순서를 나타내는데 사용한다.
