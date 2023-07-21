@@ -7,7 +7,7 @@ namespace GameSystem.InGameUI.Skill
         public void InitialSetting(ISkillUIController skillUIController, int skillTreeColumnCount);
 
         public void ActivateOrUnActivateSkillMenuUI(bool isSkillMenuUIActivated);
-        public void ActivateSkillMenu(SkillTreeType skillTreeType);
+//        public void ActivateSkillMenu(SkillTreeType skillTreeType);
     }
 
     // 생성 시, Canvas/UI 안에 들어간다.
@@ -36,7 +36,6 @@ namespace GameSystem.InGameUI.Skill
         public void InitialSetting(ISkillUIController skillUIController, int skillTreeColumnCount)
         {
             this.skillUIController = skillUIController;
-
 
             this.CreateSkillTree(skillTreeColumnCount);
         }
@@ -70,15 +69,14 @@ namespace GameSystem.InGameUI.Skill
         }
 
         // 사용자와 SkillMenuUI Prefab과의 상호작용.
-        /// <summary>
-        /// skillMenuUI의 활성화 여부를 매개변수로 전달
-        /// </summary>
-        /// <param name="isSkillMenuUIActivated"> skillMenuUI의 활성화 여부 </param>
+        // skillMenuUI의 활성화 여부를 매개변수로 전달
         public void ActivateOrUnActivateSkillMenuUI(bool isSkillMenuUIActivated)
         {
             this.skillMenuUI.gameObject.SetActive(isSkillMenuUIActivated);
         }
-        // Skill Menu UI의 우측 상단 버튼을 클릭하면, 호출되는 메소드이다.
+
+        // 23.07.21 : 기획이 변경되었다. 당분간은 사용하지 않을 예정이다.
+/*        // Skill Menu UI의 우측 상단 버튼을 클릭하면, 호출되는 메소드이다.
         // Skill Menu UI의 내용(주제)을 변경하는데 사용한다.
         public void ActivateSkillMenu(SkillTreeType skillTreeType)
         {
@@ -98,6 +96,6 @@ namespace GameSystem.InGameUI.Skill
                     this.menuTypeContentUI.GetChild((int)SkillTreeType.Class).gameObject.SetActive(true);
                     break;                   
             }
-        }
+        }*/
     }
 }

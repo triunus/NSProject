@@ -115,7 +115,7 @@ namespace GameSystem.InGameUI.Skill
             }
 
             this.skillMenuUIView.ActivateOrUnActivateSkillMenuUI(isActivated);
-            if (isActivated) this.skillMenuUIView.ActivateSkillMenu(SkillTreeType.Necromancy);
+//            if (isActivated) this.skillMenuUIView.ActivateSkillMenu(SkillTreeType.Necromancy);
         }
         // Skill Menu UI Prefab捞 积己 皋家靛.
         private void CreateSkillMenuUI()
@@ -216,7 +216,7 @@ namespace GameSystem.InGameUI.Skill
         // ISkillUIController_For_SkillMenuUIView 备泅
         public void ChangeSkillMenuType(SkillTreeType SkillTreeType)
         {
-            this.skillMenuUIView.ActivateSkillMenu(SkillTreeType);
+//            this.skillMenuUIView.ActivateSkillMenu(SkillTreeType);
         }
 
         // ISkillUIController_For_ISkillDescriptionUIView 备泅
